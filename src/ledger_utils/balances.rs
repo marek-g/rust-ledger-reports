@@ -1,6 +1,5 @@
 use chrono::Datelike;
 use ledger_parser::*;
-use rust_decimal::Decimal;
 use std::collections::HashMap;
 
 #[derive(Debug, Clone)]

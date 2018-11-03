@@ -1,6 +1,6 @@
 use handlebars::to_json;
 use input_data::*;
-use ledger_utils::*;
+use ledger_utils::balances::*;
 use serde_json::json;
 use serde_json::value::{Map, Value as Json};
 
@@ -13,7 +13,7 @@ struct Table {
 pub fn make_report_data(input_data: &InputData) -> Map<String, Json> {
     let mut data = Map::new();
 
-    let balances = get_balance(&input_data.ledger);
+    //let balances = get_balance(&input_data.ledger);
     //println!("{:?}", balances);
 
     let monthly_report = get_monthly_report(&input_data.ledger);

@@ -15,14 +15,10 @@ mod report_data;
 use std::error::Error;
 
 fn main() -> Result<(), Box<Error>> {
-    let input_data =
-        input_data::InputData::load("/mnt/truecrypt1/dokumenty/Finanse/ledger/marek.ledger")?;
-
-    println!(
-        "transactions: {}, commodity prices: {}",
-        input_data.ledger.transactions.len(),
-        input_data.ledger.commodity_prices.len()
-    );
+    let input_data = input_data::InputData::load(
+        "/mnt/truecrypt1/dokumenty/Finanse/ledger/marek.ledger",
+        "/mnt/truecrypt1/dokumenty/Finanse/ledger/prices.db",
+    )?;
 
     report::generate_report(
         "/mnt/truecrypt1/dokumenty/Finanse/ledger/report.html".to_string(),
