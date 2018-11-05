@@ -17,7 +17,7 @@ use std::error::Error;
 fn main() -> Result<(), Box<Error>> {
     let input_data = input_data::InputData::load(
         "/mnt/truecrypt1/dokumenty/Finanse/ledger/marek.ledger",
-        "/mnt/truecrypt1/dokumenty/Finanse/ledger/prices.db",
+        Some("/mnt/truecrypt1/dokumenty/Finanse/ledger/prices.db"),
     )?;
 
     report::generate_report(
