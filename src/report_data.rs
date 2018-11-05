@@ -23,7 +23,7 @@ pub fn make_report_data(input_data: &InputData) -> Map<String, Json> {
 
     data.insert("year".to_string(), to_json(format!("{:?}", monthly_report)));
 
-    println!("{:?}", data);
+    //println!("{:?}", data);
 
     data
 }

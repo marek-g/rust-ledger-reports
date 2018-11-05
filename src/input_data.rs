@@ -1,9 +1,10 @@
 use ledger_parser::*;
+use ledger_utils::prices::Prices;
 use std::error::Error;
 
 pub struct InputData {
     pub ledger: Ledger,
-    pub prices: Ledger,
+    pub prices: Prices,
 }
 
 impl InputData {
@@ -12,7 +13,8 @@ impl InputData {
         let ledger = parse(&file_content)?;
 
         let file_content = std::fs::read_to_string(prices_file)?;
-        let prices = parse(&file_content)?;
+        let prices_ledger = parse(&file_content)?;
+        let prices = Prices::load(&ledger, Some(&prices_ledger));
 
         Ok(InputData {
             ledger: ledger,

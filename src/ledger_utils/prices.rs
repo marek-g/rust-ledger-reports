@@ -9,7 +9,7 @@ pub enum PricesError {
     DateTooEarly,
 }
 
-#[derive(Eq, PartialEq, Hash, Clone)]
+#[derive(Eq, PartialEq, Hash, Clone, Debug)]
 struct CommoditiesPair {
     pub src_commodity_name: String,
     pub dst_commodity_name: String,
@@ -24,6 +24,7 @@ impl CommoditiesPair {
     }
 }
 
+#[derive(Debug)]
 struct RatesTable {
     pub table: BTreeMap<NaiveDate, Decimal>,
 }
@@ -48,6 +49,7 @@ impl RatesTable {
     }
 }
 
+#[derive(Debug)]
 pub struct Prices {
     rates: HashMap<CommoditiesPair, RatesTable>,
 }
@@ -146,8 +148,8 @@ fn get_prices_from_transactions(transactions: &Vec<Transaction>) -> Vec<Commodit
                 datetime: transaction.date.and_hms(0, 0, 0),
                 commodity_name: (&(transaction.postings[0]).amount.commodity.name).clone(),
                 amount: Amount {
-                    quantity: -transaction.postings[0].amount.quantity
-                        / transaction.postings[1].amount.quantity,
+                    quantity: -transaction.postings[1].amount.quantity
+                        / transaction.postings[0].amount.quantity,
                     commodity: (&(transaction.postings[1]).amount.commodity).clone(),
                 },
             })
