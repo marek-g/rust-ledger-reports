@@ -36,10 +36,10 @@ impl RatesTable {
         }
     }
 
-    fn get_rate(&self, date: &NaiveDate) -> Result<Decimal, PricesError> {
+    fn get_rate(&self, date: NaiveDate) -> Result<Decimal, PricesError> {
         let mut rate: Option<Decimal> = None;
         for (key, value) in self.table.iter() {
-            if key <= date {
+            if *key <= date {
                 rate = Some(*value)
             } else {
                 break;
@@ -74,7 +74,7 @@ impl Prices {
         amount: Decimal,
         src_commodity_name: &str,
         dst_commodity_name: &str,
-        date: &NaiveDate,
+        date: NaiveDate,
     ) -> Result<Decimal, PricesError> {
         let rate = self.get_rate(src_commodity_name, dst_commodity_name, date)?;
         Ok(amount * rate)
@@ -84,7 +84,7 @@ impl Prices {
         &self,
         src_commodity_name: &str,
         dst_commodity_name: &str,
-        date: &NaiveDate,
+        date: NaiveDate,
     ) -> Result<Decimal, PricesError> {
         let commodities_pair = CommoditiesPair::new(src_commodity_name, dst_commodity_name);
 

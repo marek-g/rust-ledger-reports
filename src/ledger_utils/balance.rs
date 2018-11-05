@@ -1,4 +1,6 @@
+use chrono::NaiveDate;
 use ledger_parser::*;
+use ledger_utils::prices::{Prices, PricesError};
 use rust_decimal::Decimal;
 use std::collections::HashMap;
 use std::fmt;
@@ -7,7 +9,7 @@ use std::ops::SubAssign;
 
 /// Balance of an account.
 ///
-/// Maps currency names to amounts.
+/// Maps commodity names to amounts.
 #[derive(Clone)]
 pub struct AccountBalance {
     pub amounts: HashMap<String, Amount>,
@@ -18,6 +20,28 @@ impl AccountBalance {
         AccountBalance {
             amounts: HashMap::new(),
         }
+    }
+
+    pub fn value_in(
+        &self,
+        commodity_name: &str,
+        date: NaiveDate,
+        prices: &Prices,
+    ) -> Result<Decimal, PricesError> {
+        let mut result = Decimal::new(0, 0);
+        for amount in self.amounts.values() {
+            if amount.commodity.name == commodity_name {
+                result += amount.quantity;
+            } else {
+                result += prices.convert(
+                    amount.quantity,
+                    &amount.commodity.name,
+                    commodity_name,
+                    date,
+                )?;
+            }
+        }
+        Ok(result)
     }
 
     fn remove_empties(&mut self) {
