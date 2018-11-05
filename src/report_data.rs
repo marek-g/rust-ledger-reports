@@ -35,20 +35,13 @@ fn get_table_months(monthly_report: &MonthlyReport) -> Table {
 
     for monthly_balance in &monthly_report.monthly_balances {
         let date = format!("{}/{:02}", monthly_balance.year, monthly_balance.month);
-        let cash = if monthly_balance
-            .total
-            .account_balances
-            .contains_key(&"Aktywa:Płynne:Gotówka".to_string())
-        {
-            format!(
-                "{} PLN",
-                monthly_balance.total.account_balances[&"Aktywa:Płynne:Gotówka".to_string()]
-                    .amounts[&"PLN".to_string()]
-                    .quantity
-            )
-        } else {
-            "-".to_string()
-        };
+        let cash = format!(
+            "{:?}",
+            monthly_balance
+                .total
+                .get_account_balance("Aktywa:Płynne".to_string()) //.amounts[&"PLN".to_string()]
+                                                                   //.quantity
+        );
 
         rows.push(vec![date, cash]);
     }

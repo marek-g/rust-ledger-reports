@@ -5,6 +5,7 @@ authors = ["Marek G <marek@nomail.com>"]
 
 [dependencies]
 ledger-parser = "2"
+#ledger-parser = { path = "../../libs/rust-ledger-parser", version = "*" }
 chrono = "0.4"
 rust_decimal = "0.10"
 handlebars = "1"

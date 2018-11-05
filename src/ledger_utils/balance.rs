@@ -1,12 +1,14 @@
 use ledger_parser::*;
+use rust_decimal::Decimal;
 use std::collections::HashMap;
+use std::fmt;
 use std::ops::AddAssign;
 use std::ops::SubAssign;
 
 /// Balance of an account.
 ///
 /// Maps currency names to amounts.
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct AccountBalance {
     pub amounts: HashMap<String, Amount>,
 }
@@ -15,6 +17,19 @@ impl AccountBalance {
     pub fn new() -> AccountBalance {
         AccountBalance {
             amounts: HashMap::new(),
+        }
+    }
+
+    fn remove_empties(&mut self) {
+        let zero = Decimal::new(0, 0);
+        let empties: Vec<String> = self
+            .amounts
+            .iter()
+            .filter(|&(_, amount)| amount.quantity == zero)
+            .map(|(k, _)| k.clone())
+            .collect();
+        for empty in empties {
+            self.amounts.remove(&empty);
         }
     }
 }
@@ -27,6 +42,7 @@ impl<'a> AddAssign<&'a AccountBalance> for AccountBalance {
                 .and_modify(|a| a.quantity += amount.quantity)
                 .or_insert_with(|| amount.clone());
         }
+        self.remove_empties();
     }
 }
 
@@ -38,6 +54,15 @@ impl<'a> SubAssign<&'a AccountBalance> for AccountBalance {
                 .and_modify(|a| a.quantity -= amount.quantity)
                 .or_insert_with(|| amount.clone());
         }
+        self.remove_empties();
+    }
+}
+
+impl fmt::Debug for AccountBalance {
+    fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+        let mut values: Vec<Amount> = self.amounts.values().cloned().collect();
+        values.sort_by(|a, b| a.commodity.name.partial_cmp(&b.commodity.name).unwrap());
+        write!(f, "{:?}", values)
     }
 }
 
@@ -70,6 +95,28 @@ impl Balance {
                 .or_insert_with(|| posting.amount.clone());
         }
     }
+
+    pub fn get_account_balance(&self, account_prefix: String) -> AccountBalance {
+        let mut balance = AccountBalance::new();
+        for (account_name, account_balance) in &self.account_balances {
+            if account_name.starts_with(&account_prefix) {
+                balance += account_balance;
+            }
+        }
+        balance
+    }
+
+    fn remove_empties(&mut self) {
+        let empties: Vec<String> = self
+            .account_balances
+            .iter()
+            .filter(|&(_, account_balance)| account_balance.amounts.len() == 0)
+            .map(|(k, _)| k.clone())
+            .collect();
+        for empty in empties {
+            self.account_balances.remove(&empty);
+        }
+    }
 }
 
 impl<'a> From<&'a Ledger> for Balance {
@@ -100,6 +147,7 @@ impl<'a> AddAssign<&'a Balance> for Balance {
                 .and_modify(|b| *b += account_balance)
                 .or_insert_with(|| account_balance.clone());
         }
+        self.remove_empties();
     }
 }
 
@@ -111,5 +159,6 @@ impl<'a> SubAssign<&'a Balance> for Balance {
                 .and_modify(|b| *b -= account_balance)
                 .or_insert_with(|| account_balance.clone());
         }
+        self.remove_empties();
     }
 }
