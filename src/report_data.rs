@@ -1,6 +1,6 @@
 use handlebars::to_json;
 use input_data::*;
-use ledger_utils::balances::*;
+use ledger_utils::monthly_report::*;
 use serde_json::json;
 use serde_json::value::{Map, Value as Json};
 
@@ -16,7 +16,7 @@ pub fn make_report_data(input_data: &InputData) -> Map<String, Json> {
     //let balances = get_balance(&input_data.ledger);
     //println!("{:?}", balances);
 
-    let monthly_report = get_monthly_report(&input_data.ledger);
+    let monthly_report = MonthlyReport::from(&input_data.ledger);
 
     let table_months = get_table_months(&monthly_report);
     data.insert("table_months".to_string(), to_json(&table_months));
@@ -35,19 +35,20 @@ fn get_table_months(monthly_report: &MonthlyReport) -> Table {
 
     for monthly_balance in &monthly_report.monthly_balances {
         let date = format!("{}/{:02}", monthly_balance.year, monthly_balance.month);
-        let mut cash = "-".to_string();
-        if monthly_balance
+        let cash = if monthly_balance
             .total
             .account_balances
             .contains_key(&"Aktywa:Płynne:Gotówka".to_string())
         {
-            let cash = format!(
+            format!(
                 "{} PLN",
                 monthly_balance.total.account_balances[&"Aktywa:Płynne:Gotówka".to_string()]
                     .amounts[&"PLN".to_string()]
                     .quantity
-            );
-        }
+            )
+        } else {
+            "-".to_string()
+        };
 
         rows.push(vec![date, cash]);
     }

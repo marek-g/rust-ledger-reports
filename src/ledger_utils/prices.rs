@@ -10,13 +10,13 @@ pub enum PricesError {
 }
 
 #[derive(Eq, PartialEq, Hash, Clone, Debug)]
-struct CommoditiesPair {
+pub struct CommoditiesPair {
     pub src_commodity_name: String,
     pub dst_commodity_name: String,
 }
 
 impl CommoditiesPair {
-    fn new(src_commodity_name: &str, dst_commodity_name: &str) -> CommoditiesPair {
+    pub fn new(src_commodity_name: &str, dst_commodity_name: &str) -> CommoditiesPair {
         CommoditiesPair {
             src_commodity_name: src_commodity_name.to_string(),
             dst_commodity_name: dst_commodity_name.to_string(),
@@ -25,7 +25,7 @@ impl CommoditiesPair {
 }
 
 #[derive(Debug)]
-struct RatesTable {
+pub struct RatesTable {
     pub table: BTreeMap<NaiveDate, Decimal>,
 }
 
@@ -51,7 +51,7 @@ impl RatesTable {
 
 #[derive(Debug)]
 pub struct Prices {
-    rates: HashMap<CommoditiesPair, RatesTable>,
+    pub rates: HashMap<CommoditiesPair, RatesTable>,
 }
 
 impl Prices {
