@@ -7,13 +7,32 @@ use input_data::*;
 use ledger_utils::balance::Balance;
 use ledger_utils::monthly_report::*;
 use ledger_utils::prices::Prices;
+use rust_decimal::Decimal;
 use rust_decimal::RoundingStrategy;
 use serde_json::value::{Map, Value as Json};
 
 #[derive(Serialize)]
 struct Table {
     headers: Vec<String>,
-    rows: Vec<Vec<String>>,
+    rows: Vec<Vec<TableCell>>,
+}
+
+enum TableCell {
+    Month { year: i32, month: u32 },
+    Value(Decimal),
+}
+
+impl serde::Serialize for TableCell {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        let text = match self {
+            TableCell::Month { year, month } => format!("{}/{:02}", year, month),
+            TableCell::Value(val) => format!("{}", val),
+        };
+        serializer.serialize_str(&text)
+    }
 }
 
 pub fn make_report_data(
@@ -37,6 +56,7 @@ fn get_table_months(
 ) -> Table {
     let headers = vec![
         "Date".to_string(),
+        "Assets Sum".to_string(),
         "Assets Liquid".to_string(),
         "Assets Fixed".to_string(),
         "Assets High Risk".to_string(),
@@ -44,11 +64,9 @@ fn get_table_months(
         "Expenses".to_string(),
     ];
 
-    let mut rows: Vec<Vec<String>> = Vec::new();
+    let mut rows: Vec<Vec<TableCell>> = Vec::new();
 
     for monthly_balance in &monthly_report.monthly_balances {
-        // date
-        let date = format!("{}/{:02}", monthly_balance.year, monthly_balance.month);
         let last_day = last_day_in_month(monthly_balance.year, monthly_balance.month);
 
         let calc = MonthlyCalculator::new(&monthly_balance.total, &prices, last_day, &params);
@@ -60,12 +78,16 @@ fn get_table_months(
         let expenses = calc.get_value(&params.expenses);
 
         rows.push(vec![
-            date,
-            assets_liquid,
-            assets_fixed,
-            assets_high_risk,
-            income,
-            expenses,
+            TableCell::Month {
+                year: monthly_balance.year,
+                month: monthly_balance.month,
+            },
+            TableCell::Value(assets_liquid + assets_fixed + assets_high_risk),
+            TableCell::Value(assets_liquid),
+            TableCell::Value(assets_fixed),
+            TableCell::Value(assets_high_risk),
+            TableCell::Value(income),
+            TableCell::Value(expenses),
         ]);
     }
 
@@ -97,23 +119,19 @@ impl<'a> MonthlyCalculator<'a> {
         }
     }
 
-    fn get_value(&self, accounts: &Vec<String>) -> String {
+    fn get_value(&self, accounts: &Vec<String>) -> Decimal {
         let assets_value = self
             .balance
             .get_account_balance(&(accounts.as_deref()))
             .value_in(&self.params.main_commodity, self.last_day, &self.prices);
 
         if let Ok(value) = assets_value {
-            format!(
-                "{} {}",
-                value.round_dp_with_strategy(
-                    self.params.main_commodity_decimal_points,
-                    RoundingStrategy::RoundHalfUp
-                ),
-                self.params.main_commodity
+            value.round_dp_with_strategy(
+                self.params.main_commodity_decimal_points,
+                RoundingStrategy::RoundHalfUp,
             )
         } else {
-            format!("? {}", self.params.main_commodity)
+            Decimal::new(0, 0)
         }
     }
 }
