@@ -66,8 +66,10 @@ impl<'a> From<&'a Ledger> for MonthlyReport {
             total_balance.update_with_transaction(transaction);
         }
 
-        if let Some(monthly_balance) = current_montly_balance.take() {
-            report.monthly_balances.push(monthly_balance);
+        if let Some(mut b) = current_montly_balance.take() {
+            b.monthly_change = monthly_balance.clone();
+            b.total = total_balance.clone();
+            report.monthly_balances.push(b);
         }
 
         report

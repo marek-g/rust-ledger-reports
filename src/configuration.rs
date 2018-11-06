@@ -22,7 +22,14 @@ impl Configuration {
 pub struct ReportParameters {
     pub main_commodity: String,
     pub main_commodity_decimal_points: u32,
-    pub asset_account_prefixes: Vec<String>,
+
+    pub assets_liquid: Vec<String>,
+    pub assets_fixed: Vec<String>,
+    pub assets_high_risk: Vec<String>,
+
+    pub income: Vec<String>,
+
+    pub expenses: Vec<String>,
 }
 
 impl ReportParameters {
@@ -30,7 +37,14 @@ impl ReportParameters {
         ReportParameters {
             main_commodity: "PLN".to_string(),
             main_commodity_decimal_points: 2,
-            asset_account_prefixes: vec!["Aktywa:Płynne".to_string()],
+
+            assets_liquid: vec!["Aktywa:Płynne".to_string()],
+            assets_fixed: vec!["Aktywa:Stałe".to_string()],
+            assets_high_risk: vec!["Aktywa:Kryptowaluty".to_string()],
+
+            income: vec!["Przychody".to_string()],
+
+            expenses: vec!["Wydatki".to_string()],
         }
     }
 }
