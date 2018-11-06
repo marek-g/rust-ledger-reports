@@ -14,6 +14,7 @@ mod ledger_utils;
 mod report;
 mod report_data;
 
+use configuration::OptionDeref;
 use std::error::Error;
 
 fn main() -> Result<(), Box<Error>> {
@@ -21,10 +22,7 @@ fn main() -> Result<(), Box<Error>> {
 
     let input_data = input_data::InputData::load(
         &configuration.src_ledger_file,
-        configuration
-            .src_prices_file_opt
-            .as_ref()
-            .map(String::as_str),
+        configuration.src_prices_file_opt.as_deref(),
     )?;
 
     report::generate_report(

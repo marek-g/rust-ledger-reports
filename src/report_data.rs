@@ -1,4 +1,5 @@
 use configuration::ReportParameters;
+use configuration::VecDeref;
 use date_utils::last_day_in_month;
 use handlebars::to_json;
 use input_data::*;
@@ -44,13 +45,8 @@ fn get_table_months(
 
         let assets_value = monthly_balance
             .total
-            .get_account_balance(
-                &(params
-                    .asset_account_prefixes
-                    .iter()
-                    .map(String::as_ref)
-                    .collect::<Vec<&str>>()),
-            ).value_in(&params.main_commodity, last_day, &prices);
+            .get_account_balance(&(params.asset_account_prefixes.as_deref()))
+            .value_in(&params.main_commodity, last_day, &prices);
         let assets = if let Ok(value) = assets_value {
             format!(
                 "{} {}",
