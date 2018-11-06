@@ -6,7 +6,6 @@ use input_data::*;
 use ledger_utils::monthly_report::*;
 use ledger_utils::prices::Prices;
 use rust_decimal::RoundingStrategy;
-use serde_json::json;
 use serde_json::value::{Map, Value as Json};
 
 #[derive(Serialize)]
