@@ -7,6 +7,7 @@ extern crate serde;
 extern crate serde_derive;
 extern crate serde_json;
 
+mod configuration;
 mod date_utils;
 mod input_data;
 mod ledger_utils;
@@ -16,13 +17,19 @@ mod report_data;
 use std::error::Error;
 
 fn main() -> Result<(), Box<Error>> {
+    let configuration = configuration::Configuration::new();
+
     let input_data = input_data::InputData::load(
-        "/mnt/truecrypt1/dokumenty/Finanse/ledger/marek.ledger",
-        Some("/mnt/truecrypt1/dokumenty/Finanse/ledger/prices.db"),
+        &configuration.src_ledger_file,
+        configuration
+            .src_prices_file_opt
+            .as_ref()
+            .map(String::as_str),
     )?;
 
     report::generate_report(
-        "/mnt/truecrypt1/dokumenty/Finanse/ledger/report.html".to_string(),
+        &configuration.report_file,
         &input_data,
+        &configuration.report_params,
     )
 }

@@ -120,11 +120,13 @@ impl Balance {
         }
     }
 
-    pub fn get_account_balance(&self, account_prefix: String) -> AccountBalance {
+    pub fn get_account_balance(&self, account_prefixes: &[&str]) -> AccountBalance {
         let mut balance = AccountBalance::new();
         for (account_name, account_balance) in &self.account_balances {
-            if account_name.starts_with(&account_prefix) {
-                balance += account_balance;
+            for account_prefix in account_prefixes {
+                if account_name.starts_with(account_prefix) {
+                    balance += account_balance;
+                }
             }
         }
         balance
