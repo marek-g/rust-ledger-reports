@@ -7,6 +7,7 @@ use input_data::*;
 use ledger_utils::balance::Balance;
 use ledger_utils::monthly_report::*;
 use ledger_utils::prices::Prices;
+use num_traits::cast::ToPrimitive;
 use rust_decimal::Decimal;
 use rust_decimal::RoundingStrategy;
 use serde_json::value::{Map, Value as Json};
@@ -20,6 +21,36 @@ struct Table {
 enum TableCell {
     Month { year: i32, month: u32 },
     Value(Decimal),
+}
+
+impl TableCell {
+    pub fn to_timestamp_millis(&self) -> Option<i64> {
+        if let TableCell::Month { year, month } = self {
+            Some(
+                last_day_in_month(*year, *month)
+                    .and_hms(0, 0, 0)
+                    .timestamp_millis(),
+            )
+        } else {
+            None
+        }
+    }
+
+    pub fn to_value(&self) -> Option<Decimal> {
+        if let TableCell::Value(value) = self {
+            Some(*value)
+        } else {
+            None
+        }
+    }
+
+    pub fn to_f64(&self) -> Option<f64> {
+        if let Some(decimal) = self.to_value() {
+            decimal.to_f64()
+        } else {
+            None
+        }
+    }
 }
 
 impl serde::Serialize for TableCell {
@@ -168,19 +199,38 @@ impl<'a> MonthlyCalculator<'a> {
 }
 
 fn get_area_chart1(table_months: &Table) -> Chart {
+    let min_date = table_months.rows[0][0].to_timestamp_millis().unwrap();
+    let max_date = table_months.rows.last().unwrap()[0]
+        .to_timestamp_millis()
+        .unwrap();
+
+    let mut series_assets_liquid = Vec::new();
+    let mut series_assets_fixed = Vec::new();
+    let mut series_assets_high_risk = Vec::new();
+    for row in &table_months.rows {
+        let date = row[0].to_timestamp_millis().unwrap() as f64;
+        series_assets_liquid.push([date, row[2].to_f64().unwrap()]);
+        series_assets_fixed.push([date, row[3].to_f64().unwrap()]);
+        series_assets_high_risk.push([date, row[4].to_f64().unwrap()]);
+    }
+
     Chart {
         id: "areaChart1".to_string(),
-        min_x: 0.0,
-        max_x: 1.0,
+        min_x: min_date as f64,
+        max_x: max_date as f64,
         digit_points: 0,
         series: to_json(vec![
             ChartSerie {
-                key: "Marek".to_string(),
-                values: vec![[0.0, 1.0], [1.0, 2.0]],
+                key: "Liquid Assets".to_string(),
+                values: series_assets_liquid,
             },
             ChartSerie {
-                key: "Marek 2".to_string(),
-                values: vec![[0.0, 3.0], [1.0, 4.0]],
+                key: "Fixed Assets".to_string(),
+                values: series_assets_fixed,
+            },
+            ChartSerie {
+                key: "High Risk Assets".to_string(),
+                values: series_assets_high_risk,
             },
         ]).to_string(),
     }

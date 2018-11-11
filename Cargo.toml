@@ -8,6 +8,7 @@ ledger-parser = "2"
 #ledger-parser = { path = "../../libs/rust-ledger-parser", version = "*" }
 chrono = "0.4"
 rust_decimal = "0.10"
+num-traits = "0.2"
 handlebars = "1"
 serde = "1"
 serde_derive = "1"
