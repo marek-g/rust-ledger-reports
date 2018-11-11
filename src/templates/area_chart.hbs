@@ -1,0 +1,42 @@
+<svg id="{{id}}" style='height:500px'></svg>
+
+<script>
+    var chartData = {{{series}}};
+
+    var colors = d3.scale.category20();
+    var chart;
+
+    nv.addGraph(function() {
+        chart = nv.models.stackedAreaWithFocusChart()
+            .useInteractiveGuideline(true)
+            .x(function(d) { return d[0] })
+            .y(function(d) { return d[1] })
+            .controlLabels({stacked: "Stacked"})
+            .duration(300);
+
+        chart.brushExtent([{{min_x}}, {{max_x}}]);
+        
+        chart.xAxis.tickFormat(function(d) { return d3.time.format('%x')(new Date(d)) });
+        chart.x2Axis.tickFormat(function(d) { return d3.time.format('%x')(new Date(d)) });
+        chart.yAxis.tickFormat(d3.format(',.{{digit_points}}f'));
+        chart.y2Axis.tickFormat(d3.format(',.{{digit_points}}f'));
+
+        chart.legend.vers('furious');
+
+        d3.select('#{{id}}')
+            .datum(chartData)
+            .transition().duration(1000)
+            .call(chart)
+            .each('start', function() {
+                setTimeout(function() {
+                    d3.selectAll('#{{id}} *').each(function() {
+                        if(this.__transition__)
+                            this.__transition__.duration = 1;
+                    })
+                }, 0)
+            });
+
+        nv.utils.windowResize(chart.update);
+        return chart;
+    });
+</script>

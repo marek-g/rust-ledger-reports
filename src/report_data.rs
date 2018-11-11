@@ -35,18 +35,49 @@ impl serde::Serialize for TableCell {
     }
 }
 
+#[derive(Serialize)]
+struct Chart {
+    id: String,
+    min_x: f64,
+    max_x: f64,
+    digit_points: u32,
+    series: String,
+}
+
+#[derive(Serialize)]
+struct ChartSerie {
+    key: String,
+    values: Vec<[f64; 2]>,
+}
+
 pub fn make_report_data(
     input_data: &InputData,
     report_params: &ReportParameters,
 ) -> Map<String, Json> {
     let mut data = Map::new();
 
+    configure_html_header(&mut data);
+
     let monthly_report = MonthlyReport::from(&input_data.ledger);
 
     let table_months = get_table_months(&monthly_report, &input_data.prices, &report_params);
     data.insert("table_months".to_string(), to_json(&table_months));
 
+    let area_chart1 = get_area_chart1(&table_months);
+    data.insert("area_chart1".to_string(), to_json(&area_chart1));
+
     data
+}
+
+fn configure_html_header(data: &mut Map<String, Json>) {
+    let style = include_str!("templates/charts/nv.d3.css");
+
+    let mut script = include_str!("templates/charts/d3.v3.js").to_owned();
+    script.push_str("\n");
+    script.push_str(include_str!("templates/charts/nv.d3.js"));
+
+    data.insert("html_style".to_string(), to_json(style));
+    data.insert("html_script".to_string(), to_json(script));
 }
 
 fn get_table_months(
@@ -133,5 +164,24 @@ impl<'a> MonthlyCalculator<'a> {
         } else {
             Decimal::new(0, 0)
         }
+    }
+}
+
+fn get_area_chart1(table_months: &Table) -> Chart {
+    Chart {
+        id: "areaChart1".to_string(),
+        min_x: 0.0,
+        max_x: 1.0,
+        digit_points: 0,
+        series: to_json(vec![
+            ChartSerie {
+                key: "Marek".to_string(),
+                values: vec![[0.0, 1.0], [1.0, 2.0]],
+            },
+            ChartSerie {
+                key: "Marek 2".to_string(),
+                values: vec![[0.0, 3.0], [1.0, 4.0]],
+            },
+        ]).to_string(),
     }
 }
