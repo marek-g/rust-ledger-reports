@@ -120,10 +120,11 @@ fn get_table_months(
 ) -> Table {
     let headers = vec![
         "Date".to_string(),
-        "Assets Sum".to_string(),
-        "Assets Liquid".to_string(),
-        "Assets Fixed".to_string(),
-        "Assets High Risk".to_string(),
+        "Assets Total Net".to_string(),
+        "Liquid Assets".to_string(),
+        "Fixed Assets".to_string(),
+        "High Risk Assets Net".to_string(),
+        "High Risk Assets Tax".to_string(),
         "Income".to_string(),
         "Expenses".to_string(),
     ];
@@ -135,9 +136,21 @@ fn get_table_months(
 
         let calc = MonthlyCalculator::new(&monthly_balance.total, &prices, last_day, &params);
 
+        let tax = Decimal::new(32, 2);
+
         let assets_liquid = calc.get_value(&params.assets_liquid);
         let assets_fixed = calc.get_value(&params.assets_fixed);
-        let assets_high_risk = calc.get_value(&params.assets_high_risk);
+        let assets_high_risk_net = (calc.get_value(&params.assets_high_risk)
+            * (Decimal::new(1, 0) - tax))
+            .round_dp_with_strategy(
+                params.main_commodity_decimal_points,
+                RoundingStrategy::RoundHalfUp,
+            );
+        let assets_high_risk_tax = (calc.get_value(&params.assets_high_risk) * tax)
+            .round_dp_with_strategy(
+                params.main_commodity_decimal_points,
+                RoundingStrategy::RoundHalfUp,
+            );
         let income = calc.get_value(&params.income);
         let expenses = calc.get_value(&params.expenses);
 
@@ -146,10 +159,11 @@ fn get_table_months(
                 year: monthly_balance.year,
                 month: monthly_balance.month,
             },
-            TableCell::Value(assets_liquid + assets_fixed + assets_high_risk),
+            TableCell::Value(assets_liquid + assets_fixed + assets_high_risk_net),
             TableCell::Value(assets_liquid),
             TableCell::Value(assets_fixed),
-            TableCell::Value(assets_high_risk),
+            TableCell::Value(assets_high_risk_net),
+            TableCell::Value(assets_high_risk_tax),
             TableCell::Value(income),
             TableCell::Value(expenses),
         ]);
@@ -208,12 +222,14 @@ fn get_area_chart1(table_months: &Table) -> Chart {
 
     let mut series_assets_liquid = Vec::new();
     let mut series_assets_fixed = Vec::new();
-    let mut series_assets_high_risk = Vec::new();
+    let mut series_assets_high_risk_net = Vec::new();
+    let mut series_assets_high_risk_tax = Vec::new();
     for row in &table_months.rows {
         let date = row[0].to_timestamp_millis().unwrap() as f64;
         series_assets_liquid.push([date, row[2].to_f64().unwrap()]);
         series_assets_fixed.push([date, row[3].to_f64().unwrap()]);
-        series_assets_high_risk.push([date, row[4].to_f64().unwrap()]);
+        series_assets_high_risk_net.push([date, row[4].to_f64().unwrap()]);
+        series_assets_high_risk_tax.push([date, row[5].to_f64().unwrap()]);
     }
 
     Chart {
@@ -231,8 +247,12 @@ fn get_area_chart1(table_months: &Table) -> Chart {
                 values: series_assets_fixed,
             },
             ChartSerie {
-                key: "High Risk Assets".to_string(),
-                values: series_assets_high_risk,
+                key: "High Risk Assets Net".to_string(),
+                values: series_assets_high_risk_net,
+            },
+            ChartSerie {
+                key: "High Risk Assets Tax".to_string(),
+                values: series_assets_high_risk_tax,
             },
         ]).to_string(),
     }
