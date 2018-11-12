@@ -101,7 +101,9 @@ pub fn make_report_data(
 }
 
 fn configure_html_header(data: &mut Map<String, Json>) {
-    let style = include_str!("templates/charts/nv.d3.css");
+    let mut style = include_str!("templates/charts/nv.d3.css").to_owned();
+    style.push_str("\n");
+    style.push_str(include_str!("templates/main.css"));
 
     let mut script = include_str!("templates/charts/d3.v3.js").to_owned();
     script.push_str("\n");

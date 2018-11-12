@@ -1,18 +1,22 @@
-<table>
-    <thead>
-        <tr>
-            {{#each headers}}
-            <th>{{this}}</th>
+<div class="table-container">
+
+    <table>
+        <thead>
+            <tr>
+                {{#each headers}}
+                <th>{{this}}</th>
+                {{/each}}
+            </tr>
+        </thead>
+        <tbody>
+            {{#each rows}}
+            <tr align="right">
+                {{#each .}}
+                <td>{{this}}</td>
+                {{/each}}
+            </tr>
             {{/each}}
-        </tr>
-    </thead>
-    <tbody>
-        {{#each rows}}
-        <tr align="right">
-            {{#each .}}
-            <td>{{this}}</td>
-            {{/each}}
-        </tr>
-        {{/each}}
-    </tbody>
-</table>
+        </tbody>
+    </table>
+
+</div>

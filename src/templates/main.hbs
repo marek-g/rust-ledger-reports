@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>HTML Tables</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ledger Reports</title>
 
     <style>
 {{{ html_style }}}
@@ -17,9 +18,25 @@
 
 <body>
 
-    {{> area_chart area_chart1 }}
+    <header>
+        Ledger Reports
+    </header>
 
-    {{> table table_months }}
+    <main>
+
+        <section class="top_section">
+
+            {{> area_chart area_chart1 }}
+
+        </section>
+
+        <section class="bottom_section">
+
+            {{> table table_months }}
+
+        </section>
+
+    </main>
 
 </body>
 

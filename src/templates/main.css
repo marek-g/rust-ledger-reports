@@ -1,0 +1,61 @@
+/* Page layout */
+* {
+    margin: 0; padding: 0;
+}
+html, body {
+    height: 100%;
+}
+header {
+    height: 50px;
+}
+main {
+    height: calc(100% - 50px);
+}
+.top_section, .bottom_section {
+    height: 50%;
+}
+
+
+/* Table layout */
+.table-container {
+    height: 100%;
+}
+.table-container table {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+    width: 100%;
+}
+.table-container table thead {
+    /* head takes the height it requires, 
+    and it's not scaled when table is resized */
+    flex: 0 0 auto;
+    width: calc(100% - 1.2em);
+}
+.table-container table tbody {
+    /* body takes all the remaining available space */
+    flex: 1 1 auto;
+    display: block;
+    overflow-y: scroll;
+}
+.table-container table tbody tr {
+    width: 100%;
+}
+.table-container table thead,
+.table-container table tbody tr {
+    display: table;
+    table-layout: fixed;
+}
+
+
+/* Table style */
+.table-container table {
+    border: 1px solid lightgrey;
+}
+/*.table-container table td, table th {
+    padding: 0.3em;
+    #border: 1px solid lightgrey;
+}*/
+.table-container table th {
+    border: 1px solid grey;
+}
