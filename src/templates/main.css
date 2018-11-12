@@ -57,13 +57,31 @@ body {
 /* Table style */
 .table-container table {
     border: 1px solid lightgrey;
+    border-collapse: collapse;
+    background: #b3a48d;;
+    color: #5b4421;
 }
-/*.table-container table td, table th {
-    padding: 0.3em;
-    #border: 1px solid lightgrey;
-}*/
-.table-container table th {
-    border: 1px solid grey;
+
+.table-container table td, table th {
+    padding: 0.2em;
+}
+
+.table-container table td {
+    text-align: right;
+}
+
+.table-container tr:nth-child(odd) td {
+	background: #dfc7a0;
+}
+
+.table-container tr:nth-child(even) td {
+	background: #ccba9e;
+}
+
+.table-container table td:first-child {
+    text-align: center;
+    font-weight: bold;
+    background: #b3a48d;
 }
 
 
