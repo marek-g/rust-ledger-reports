@@ -3,7 +3,6 @@
 <script>
     var chartData = {{{series}}};
 
-    var colors = d3.scale.category20();
     var chart;
 
     nv.addGraph(function() {
@@ -12,12 +11,15 @@
             .x(function(d) { return d[0] })
             .y(function(d) { return d[1] })
             .controlLabels({stacked: "Stacked"})
-            .duration(300);
+            .duration(300)
+            .color(['#f05b4f', '#d17905', '#f4c63d', '#d70206'])
+            .rightAlignYAxis(true)
+            .margin({ right: 80, left: 40 });
 
         chart.brushExtent([{{min_x}}, {{max_x}}]);
         
-        chart.xAxis.tickFormat(function(d) { return d3.time.format('%x')(new Date(d)) });
-        chart.x2Axis.tickFormat(function(d) { return d3.time.format('%x')(new Date(d)) });
+        chart.xAxis.tickFormat(function(d) { return d3.time.format('%Y/%m')(new Date(d)) });
+        chart.x2Axis.tickFormat(function(d) { return d3.time.format('%Y/%m')(new Date(d)) });
         chart.yAxis.tickFormat(d3.format(',.{{digit_points}}f'));
         chart.y2Axis.tickFormat(d3.format(',.{{digit_points}}f'));
 

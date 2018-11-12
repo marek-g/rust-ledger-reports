@@ -16,6 +16,12 @@ main {
 }
 
 
+/* Page style */
+body {
+    background-color: #eadbc4;
+}
+
+
 /* Table layout */
 .table-container {
     height: 100%;
@@ -58,4 +64,15 @@ main {
 }*/
 .table-container table th {
     border: 1px solid grey;
+}
+
+
+/* Chart style */
+.nv-axis text {
+    fill: rgba(0,0,0,.4);
+}
+
+.nv-axis .tick line {
+    stroke: rgba(0,0,0,.15);
+    stroke-dasharray: 2,2;
 }
