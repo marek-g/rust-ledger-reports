@@ -19,22 +19,33 @@
 <body>
 
     <header>
-        <center>Ledger Reports</center>
+        <button class="tablink" onclick="openPage('Assets', this)" id="defaultOpen">Assets</button>
+        <button class="tablink" onclick="openPage('Expenses', this)">Expenses</button>
     </header>
 
     <main>
 
-        <section class="top_section">
+        <div id="Assets" class="tabcontent_default">
 
-            {{> area_chart area_chart1 }}
+            <section class="top_section">
+                {{> area_chart area_chart1 }}
+            </section>
 
-        </section>
+            <section class="bottom_section">
+                {{> table table_months }}
+            </section>
 
-        <section class="bottom_section">
+        </div>
 
-            {{> table table_months }}
+        <div id="Expenses" class="tabcontent">
+            <section class="top_section">
+                {{> table table_months }}
+            </section>
 
-        </section>
+            <section class="bottom_section">
+                {{> area_chart area_chart2 }}
+            </section>
+        </div>
 
     </main>
 

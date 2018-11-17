@@ -6,10 +6,10 @@ html, body {
     height: 100%;
 }
 header {
-    height: 50px;
+    height: 30px;
 }
 main {
-    height: calc(100% - 50px);
+    height: calc(100% - 30px);
 }
 .top_section, .bottom_section {
     height: 50%;
@@ -19,6 +19,36 @@ main {
 /* Page style */
 body {
     background-color: #eadbc4;
+}
+
+
+/* Tabs style */
+.tablink {
+    background-color: #555;
+    color: white;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    font-size: 20px;
+    width: 25%;
+    height: 30px;
+}
+
+.tablink:hover {
+    background-color: #777;
+}
+
+.tablink.active {
+    background-color: rgb(255, 152, 16);
+}
+
+.tabcontent {
+    display: none;
+}
+
+.tabcontent_default {
+    display: inline;
 }
 
 

@@ -94,8 +94,10 @@ pub fn make_report_data(
     let table_months = get_table_months(&monthly_report, &input_data.prices, &report_params);
     data.insert("table_months".to_string(), to_json(&table_months));
 
-    let area_chart1 = get_area_chart1(&table_months);
+    let mut area_chart1 = get_area_chart1(&table_months);
     data.insert("area_chart1".to_string(), to_json(&area_chart1));
+    area_chart1.id = "areaChart2".to_string();
+    data.insert("area_chart2".to_string(), to_json(&area_chart1));
 
     data
 }
@@ -108,6 +110,8 @@ fn configure_html_header(data: &mut Map<String, Json>) {
     let mut script = include_str!("templates/charts/d3.v3.js").to_owned();
     script.push_str("\n");
     script.push_str(include_str!("templates/charts/nv.d3.js"));
+    script.push_str("\n");
+    script.push_str(include_str!("templates/main.js"));
 
     data.insert("html_style".to_string(), to_json(style));
     data.insert("html_script".to_string(), to_json(script));
