@@ -12,7 +12,7 @@ main {
     height: calc(100% - 30px);
 }
 .top_section, .bottom_section {
-    height: 50%;
+    height: 100%;
 }
 
 
