@@ -7,7 +7,7 @@ authors = ["Marek G <marek@nomail.com>"]
 ledger-parser = "2"
 #ledger-parser = { path = "../../libs/rust-ledger-parser", version = "*" }
 chrono = "0.4"
-rust_decimal = "0.10"
+rust_decimal = "0.11"
 num-traits = "0.2"
 handlebars = "1"
 serde = "1"
