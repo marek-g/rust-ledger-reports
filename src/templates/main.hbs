@@ -19,13 +19,20 @@
 <body>
 
     <header>
-        <button class="tablink" onclick="openPage('Assets', this)" id="defaultOpen">Assets</button>
+        <button class="tablink" onclick="openPage('Summary', this)" id="defaultOpen">Summary</button>
+        <button class="tablink" onclick="openPage('Assets', this)">Assets</button>
         <button class="tablink" onclick="openPage('Expenses', this)">Expenses</button>
     </header>
 
     <main>
 
-        <div id="Assets" class="tabcontent_default">
+        <div id="Summary" class="tabcontent_default">
+            <section class="top_section">
+                {{> table table_summary }}
+            </section>
+        </div>
+
+        <div id="Assets" class="tabcontent">
             <section class="top_section">
                 {{> area_chart area_chart1 }}
             </section>

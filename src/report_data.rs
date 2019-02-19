@@ -1,4 +1,4 @@
-use chrono::NaiveDate;
+use chrono::prelude::*;
 use configuration::ReportParameters;
 use configuration::VecDeref;
 use date_utils::last_day_in_month;
@@ -21,6 +21,7 @@ struct Table {
 enum TableCell {
     Month { year: i32, month: u32 },
     Value(Decimal),
+    Text(String),
 }
 
 impl TableCell {
@@ -61,6 +62,7 @@ impl serde::Serialize for TableCell {
         let text = match self {
             TableCell::Month { year, month } => format!("{}/{:02}", year, month),
             TableCell::Value(val) => format!("{}", val),
+            TableCell::Text(val) => format!("{}", val),
         };
         serializer.serialize_str(&text)
     }
@@ -91,6 +93,15 @@ pub fn make_report_data(
 
     let monthly_report = MonthlyReport::from(&input_data.ledger);
 
+    let empty_balance = Balance::new();
+    let total_balance = &monthly_report
+        .monthly_balances
+        .last()
+        .map(|mb| &mb.total)
+        .unwrap_or_else(|| &empty_balance);
+    let table_summary = get_table_summary(total_balance, &input_data.prices, &report_params);
+    data.insert("table_summary".to_string(), to_json(&table_summary));
+
     let table_months = get_table_months(&monthly_report, &input_data.prices, &report_params);
     data.insert("table_months".to_string(), to_json(&table_months));
 
@@ -115,6 +126,31 @@ fn configure_html_header(data: &mut Map<String, Json>) {
 
     data.insert("html_style".to_string(), to_json(style));
     data.insert("html_script".to_string(), to_json(script));
+}
+
+fn get_table_summary(balance: &Balance, prices: &Prices, params: &ReportParameters) -> Table {
+    let headers = vec!["Account".to_string(), "Amount".to_string()];
+
+    let mut rows: Vec<Vec<TableCell>> = Vec::new();
+
+    for (ref account_name, ref account_balance) in &balance.account_balances {
+        let amount = account_balance.value_in_commodity_rounded(
+            &params.main_commodity,
+            params.main_commodity_decimal_points,
+            Local::now().date().naive_local(),
+            &prices,
+        );
+
+        rows.push(vec![
+            TableCell::Text(account_name.to_string()),
+            TableCell::Value(amount),
+        ]);
+    }
+
+    Table {
+        headers: headers,
+        rows: rows,
+    }
 }
 
 fn get_table_months(
@@ -202,19 +238,14 @@ impl<'a> MonthlyCalculator<'a> {
     }
 
     fn get_value(&self, accounts: &Vec<String>) -> Decimal {
-        let assets_value = self
-            .balance
+        self.balance
             .get_account_balance(&(accounts.as_deref()))
-            .value_in(&self.params.main_commodity, self.last_day, &self.prices);
-
-        if let Ok(value) = assets_value {
-            value.round_dp_with_strategy(
+            .value_in_commodity_rounded(
+                &self.params.main_commodity,
                 self.params.main_commodity_decimal_points,
-                RoundingStrategy::RoundHalfUp,
+                self.last_day,
+                &self.prices,
             )
-        } else {
-            Decimal::new(0, 0)
-        }
     }
 }
 
@@ -258,6 +289,7 @@ fn get_area_chart1(table_months: &Table) -> Chart {
                 key: "High Risk Assets Tax".to_string(),
                 values: series_assets_high_risk_tax,
             },
-        ]).to_string(),
+        ])
+        .to_string(),
     }
 }

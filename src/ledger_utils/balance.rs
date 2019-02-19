@@ -2,6 +2,7 @@ use chrono::NaiveDate;
 use ledger_parser::*;
 use ledger_utils::prices::{Prices, PricesError};
 use rust_decimal::Decimal;
+use rust_decimal::RoundingStrategy;
 use std::collections::HashMap;
 use std::fmt;
 use std::ops::AddAssign;
@@ -22,7 +23,7 @@ impl AccountBalance {
         }
     }
 
-    pub fn value_in(
+    pub fn value_in_commodity(
         &self,
         commodity_name: &str,
         date: NaiveDate,
@@ -42,6 +43,21 @@ impl AccountBalance {
             }
         }
         Ok(result)
+    }
+
+    pub fn value_in_commodity_rounded(
+        &self,
+        commodity_name: &str,
+        decimal_points: u32,
+        date: NaiveDate,
+        prices: &Prices,
+    ) -> Decimal {
+        let assets_value = self.value_in_commodity(commodity_name, date, prices);
+        if let Ok(value) = assets_value {
+            value.round_dp_with_strategy(decimal_points, RoundingStrategy::RoundHalfUp)
+        } else {
+            Decimal::new(0, 0)
+        }
     }
 
     fn remove_empties(&mut self) {
