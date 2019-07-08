@@ -4,10 +4,10 @@ version = "0.1.0"
 authors = ["Marek G <marek@nomail.com>"]
 
 [dependencies]
-ledger-parser = "2"
+ledger-parser = "3"
 #ledger-parser = { path = "../../libs/rust-ledger-parser", version = "*" }
 chrono = "0.4"
-rust_decimal = "0.11"
+rust_decimal = "1"
 num-traits = "0.2"
 handlebars = "1"
 serde = "1"

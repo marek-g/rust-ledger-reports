@@ -128,11 +128,12 @@ impl Balance {
                 .entry(posting.account.clone())
                 .or_insert_with(|| AccountBalance::new());
 
+            // TODO: handle empty amounts & balance verifications
             account_balance
                 .amounts
-                .entry(posting.amount.commodity.name.clone())
-                .and_modify(|a| a.quantity += posting.amount.quantity)
-                .or_insert_with(|| posting.amount.clone());
+                .entry(posting.amount.clone().unwrap().commodity.name)
+                .and_modify(|a| a.quantity += posting.amount.clone().unwrap().quantity)
+                .or_insert_with(|| posting.amount.clone().unwrap());
         }
     }
 

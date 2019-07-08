@@ -9,11 +9,11 @@ pub struct Configuration {
 impl Configuration {
     pub fn new() -> Configuration {
         Configuration {
-            src_ledger_file: "/mnt/truecrypt1/dokumenty/Finanse/ledger/marek.ledger".to_string(),
+            src_ledger_file: "/media/truecrypt1/dokumenty/Finanse/ledger/marek.ledger".to_string(),
             src_prices_file_opt: Some(
-                "/mnt/truecrypt1/dokumenty/Finanse/ledger/prices.db".to_string(),
+                "/media/truecrypt1/dokumenty/Finanse/ledger/prices.db".to_string(),
             ),
-            report_file: "/mnt/truecrypt1/dokumenty/Finanse/ledger/report.html".to_string(),
+            report_file: "/media/truecrypt1/dokumenty/Finanse/ledger/report.html".to_string(),
             report_params: ReportParameters::new(),
         }
     }

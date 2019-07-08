@@ -138,19 +138,20 @@ impl Prices {
 fn get_prices_from_transactions(transactions: &Vec<Transaction>) -> Vec<CommodityPrice> {
     let mut result = Vec::new();
     for transaction in transactions {
+        // TODO: handle empty amounts & balance verifications
         if transaction.postings.len() == 2
-            && transaction.postings[0].amount.commodity.name
-                != transaction.postings[1].amount.commodity.name
-            && transaction.postings[0].amount.quantity != Decimal::new(0, 0)
-            && transaction.postings[1].amount.quantity != Decimal::new(0, 0)
+            && transaction.postings[0].amount.clone().unwrap().commodity.name
+                != transaction.postings[1].amount.clone().unwrap().commodity.name
+            && transaction.postings[0].amount.clone().unwrap().quantity != Decimal::new(0, 0)
+            && transaction.postings[1].amount.clone().unwrap().quantity != Decimal::new(0, 0)
         {
             result.push(CommodityPrice {
                 datetime: transaction.date.and_hms(0, 0, 0),
-                commodity_name: (&(transaction.postings[0]).amount.commodity.name).clone(),
+                commodity_name: (transaction.postings[0]).amount.clone().unwrap().commodity.name,
                 amount: Amount {
-                    quantity: -transaction.postings[1].amount.quantity
-                        / transaction.postings[0].amount.quantity,
-                    commodity: (&(transaction.postings[1]).amount.commodity).clone(),
+                    quantity: -transaction.postings[1].amount.clone().unwrap().quantity
+                        / transaction.postings[0].amount.clone().unwrap().quantity,
+                    commodity: (transaction.postings[1]).amount.clone().unwrap().commodity,
                 },
             })
         }
