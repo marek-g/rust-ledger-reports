@@ -1,15 +1,15 @@
 use chrono::prelude::*;
-use configuration::ReportParameters;
-use configuration::VecDeref;
-use date_utils::last_day_in_month;
+use crate::configuration::{VecDeref, ReportParameters};
+use crate::date_utils::last_day_in_month;
 use handlebars::to_json;
-use input_data::*;
-use ledger_utils::balance::Balance;
-use ledger_utils::monthly_report::*;
-use ledger_utils::prices::Prices;
+use crate::input_data::*;
+use crate::ledger_utils::balance::Balance;
+use crate::ledger_utils::monthly_report::*;
+use crate::ledger_utils::prices::Prices;
 use num_traits::cast::ToPrimitive;
 use rust_decimal::Decimal;
 use rust_decimal::RoundingStrategy;
+use serde::Serialize;
 use serde_json::value::{Map, Value as Json};
 
 #[derive(Serialize)]

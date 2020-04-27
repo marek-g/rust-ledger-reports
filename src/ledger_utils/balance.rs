@@ -1,6 +1,6 @@
 use chrono::NaiveDate;
 use ledger_parser::*;
-use ledger_utils::prices::{Prices, PricesError};
+use crate::ledger_utils::prices::{Prices, PricesError};
 use rust_decimal::Decimal;
 use rust_decimal::RoundingStrategy;
 use std::collections::HashMap;

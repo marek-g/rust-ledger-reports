@@ -1,6 +1,6 @@
 use chrono::Datelike;
 use ledger_parser::Ledger;
-use ledger_utils::balance::Balance;
+use crate::ledger_utils::balance::Balance;
 
 #[derive(Debug, Clone)]
 pub struct MonthlyBalance {

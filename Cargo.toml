@@ -1,15 +1,17 @@
 [package]
-name = "ledger-reports"
+name = "ledger_reports"
 version = "0.1.0"
 authors = ["Marek G <marek@nomail.com>"]
+edition = "2018"
 
 [dependencies]
 ledger-parser = "3"
 #ledger-parser = { path = "../../libs/rust-ledger-parser", version = "*" }
+clap = "2"
+toml = "0.5"
 chrono = "0.4"
-rust_decimal = "1"
+rust_decimal = "1.1"
 num-traits = "0.2"
 handlebars = "1"
-serde = "1"
-serde_derive = "1"
+serde = { version = "1.0", features = ["derive"] }
 serde_json = "1"

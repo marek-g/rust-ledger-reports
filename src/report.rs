@@ -1,16 +1,16 @@
-use configuration::ReportParameters;
+use crate::configuration::ReportParameters;
 use std::fs::File;
 
 use handlebars::Handlebars;
-use input_data::InputData;
-use report_data::make_report_data;
+use crate::input_data::InputData;
+use crate::report_data::make_report_data;
 use std::error::Error;
 
 pub fn generate_report(
     output_file: &str,
     input_data: &InputData,
     report_params: &ReportParameters,
-) -> Result<(), Box<Error>> {
+) -> Result<(), Box<dyn Error>> {
     let data = make_report_data(&input_data, &report_params);
 
     let mut reg = Handlebars::new();
