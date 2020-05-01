@@ -3,7 +3,7 @@ use serde::Deserialize;
 #[derive(Deserialize)]
 pub struct Configuration {
     pub src_ledger_file: String,
-    pub src_prices_file_opt: Option<String>,
+    pub src_prices_file: Option<String>,
     pub report_file: String,
 
     pub report_params: ReportParameters,

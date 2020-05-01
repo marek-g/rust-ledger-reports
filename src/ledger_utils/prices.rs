@@ -4,8 +4,9 @@ use rust_decimal::Decimal;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
 
+#[derive(Debug)]
 pub enum PricesError {
-    NoSuchCommoditiesPair,
+    NoSuchCommoditiesPair(CommoditiesPair),
     DateTooEarly,
 }
 
@@ -97,7 +98,7 @@ impl Prices {
     ) -> Result<&RatesTable, PricesError> {
         self.rates
             .get(&commodities_pair)
-            .ok_or(PricesError::NoSuchCommoditiesPair)
+            .ok_or(PricesError::NoSuchCommoditiesPair(commodities_pair.clone()))
     }
 
     fn add_prices(&mut self, prices: &Vec<CommodityPrice>) {

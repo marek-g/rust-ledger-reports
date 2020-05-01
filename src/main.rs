@@ -40,7 +40,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let input_data = input_data::InputData::load(
         &configuration.src_ledger_file,
-        configuration.src_prices_file_opt.as_deref(),
+        configuration.src_prices_file.as_deref(),
     )?;
 
     report::generate_report(

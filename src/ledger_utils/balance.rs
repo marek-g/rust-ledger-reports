@@ -56,7 +56,7 @@ impl AccountBalance {
         if let Ok(value) = assets_value {
             value.round_dp_with_strategy(decimal_points, RoundingStrategy::RoundHalfUp)
         } else {
-            Decimal::new(0, 0)
+            panic!("{:?}", assets_value);
         }
     }
 
@@ -146,6 +146,7 @@ impl Balance {
                 }
             }
         }
+
         balance
     }
 
