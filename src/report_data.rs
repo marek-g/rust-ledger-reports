@@ -13,9 +13,14 @@ use serde::Serialize;
 use serde_json::value::{Map, Value as Json};
 
 #[derive(Serialize)]
+struct TableRow {
+    columns: Vec<TableCell>,
+}
+
+#[derive(Serialize)]
 struct Table {
     headers: Vec<String>,
-    rows: Vec<Vec<TableCell>>,
+    rows: Vec<TableRow>,
 }
 
 enum TableCell {
@@ -131,7 +136,7 @@ fn configure_html_header(data: &mut Map<String, Json>) {
 fn get_table_summary(balance: &Balance, prices: &Prices, params: &ReportParameters) -> Table {
     let headers = vec!["Account".to_string(), "Amount".to_string()];
 
-    let mut rows: Vec<Vec<TableCell>> = Vec::new();
+    let mut rows: Vec<TableRow> = Vec::new();
 
     for (ref account_name, ref account_balance) in &balance.account_balances {
         let amount = account_balance.value_in_commodity_rounded(
@@ -141,10 +146,12 @@ fn get_table_summary(balance: &Balance, prices: &Prices, params: &ReportParamete
             &prices,
         );
 
-        rows.push(vec![
-            TableCell::Text(account_name.to_string()),
-            TableCell::Value(amount),
-        ]);
+        rows.push(TableRow {
+            columns: vec![
+                TableCell::Text(account_name.to_string()),
+                TableCell::Value(amount),
+            ]
+        });
     }
 
     Table {
@@ -169,7 +176,7 @@ fn get_table_months(
         "Expenses".to_string(),
     ];
 
-    let mut rows: Vec<Vec<TableCell>> = Vec::new();
+    let mut rows: Vec<TableRow> = Vec::new();
 
     for monthly_balance in &monthly_report.monthly_balances {
         let last_day = last_day_in_month(monthly_balance.year, monthly_balance.month);
@@ -194,19 +201,21 @@ fn get_table_months(
         let income = calc.get_value(&params.income);
         let expenses = calc.get_value(&params.expenses);
 
-        rows.push(vec![
-            TableCell::Month {
-                year: monthly_balance.year,
-                month: monthly_balance.month,
-            },
-            TableCell::Value(assets_liquid + assets_fixed + assets_high_risk_net),
-            TableCell::Value(assets_liquid),
-            TableCell::Value(assets_fixed),
-            TableCell::Value(assets_high_risk_net),
-            TableCell::Value(assets_high_risk_tax),
-            TableCell::Value(income),
-            TableCell::Value(expenses),
-        ]);
+        rows.push(TableRow {
+            columns: vec![
+                TableCell::Month {
+                    year: monthly_balance.year,
+                    month: monthly_balance.month,
+                },
+                TableCell::Value(assets_liquid + assets_fixed + assets_high_risk_net),
+                TableCell::Value(assets_liquid),
+                TableCell::Value(assets_fixed),
+                TableCell::Value(assets_high_risk_net),
+                TableCell::Value(assets_high_risk_tax),
+                TableCell::Value(income),
+                TableCell::Value(expenses),
+            ]}
+        );
     }
 
     Table {
@@ -250,8 +259,8 @@ impl<'a> MonthlyCalculator<'a> {
 }
 
 fn get_area_chart1(table_months: &Table) -> Chart {
-    let min_date = table_months.rows[0][0].to_timestamp_millis().unwrap();
-    let max_date = table_months.rows.last().unwrap()[0]
+    let min_date = table_months.rows[0].columns[0].to_timestamp_millis().unwrap();
+    let max_date = table_months.rows.last().unwrap().columns[0]
         .to_timestamp_millis()
         .unwrap();
 
@@ -260,11 +269,11 @@ fn get_area_chart1(table_months: &Table) -> Chart {
     let mut series_assets_high_risk_net = Vec::new();
     let mut series_assets_high_risk_tax = Vec::new();
     for row in &table_months.rows {
-        let date = row[0].to_timestamp_millis().unwrap() as f64;
-        series_assets_liquid.push([date, row[2].to_f64().unwrap()]);
-        series_assets_fixed.push([date, row[3].to_f64().unwrap()]);
-        series_assets_high_risk_net.push([date, row[4].to_f64().unwrap()]);
-        series_assets_high_risk_tax.push([date, row[5].to_f64().unwrap()]);
+        let date = row.columns[0].to_timestamp_millis().unwrap() as f64;
+        series_assets_liquid.push([date, row.columns[2].to_f64().unwrap()]);
+        series_assets_fixed.push([date, row.columns[3].to_f64().unwrap()]);
+        series_assets_high_risk_net.push([date, row.columns[4].to_f64().unwrap()]);
+        series_assets_high_risk_tax.push([date, row.columns[5].to_f64().unwrap()]);
     }
 
     Chart {
