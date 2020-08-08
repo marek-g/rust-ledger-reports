@@ -75,6 +75,13 @@ impl serde::Serialize for TableCell {
 }
 
 #[derive(Serialize)]
+struct TreeNode {
+    name: String,
+    amount: Decimal,
+    children: Vec<TreeNode>,
+}
+
+#[derive(Serialize)]
 struct Chart {
     id: String,
     min_x: f64,
@@ -105,8 +112,8 @@ pub fn make_report_data(
         .last()
         .map(|mb| &mb.total)
         .unwrap_or_else(|| &empty_balance);
-    let table_summary = get_table_summary(total_balance, &input_data.prices, &report_params);
-    data.insert("table_summary".to_string(), to_json(&table_summary));
+    let summary_tree = get_summary_tree(total_balance, &input_data.prices, &report_params);
+    data.insert("summary_tree".to_string(), to_json(&summary_tree));
 
     let table_months = get_table_months(&monthly_report, &input_data.prices, &report_params);
     data.insert("table_months".to_string(), to_json(&table_months));
@@ -134,33 +141,29 @@ fn configure_html_header(data: &mut Map<String, Json>) {
     data.insert("html_script".to_string(), to_json(script));
 }
 
-fn get_table_summary(balance: &Balance, prices: &Prices, params: &ReportParameters) -> Table {
-    let headers = vec!["Account".to_string(), "Amount".to_string()];
+fn get_summary_tree(balance: &Balance, prices: &Prices, params: &ReportParameters) -> TreeNode {
+    let src_tree_root= TreeBalanceNode::from(balance.clone());
+    convert_tree_node("/", &src_tree_root, prices, params)
+}
 
-    let mut rows: Vec<TableRow> = Vec::new();
-
-    let tree_balance= TreeBalanceNode::from(balance.clone());
-
-    for (ref account_name, ref account_balance) in &balance.account_balances {
-        let amount = account_balance.value_in_commodity_rounded(
+fn convert_tree_node(name: &str, src_node: &TreeBalanceNode,
+                     prices: &Prices, params: &ReportParameters) -> TreeNode {
+    let mut node = TreeNode {
+        name: name.to_string(),
+        amount: src_node.balance.value_in_commodity_rounded(
             &params.main_commodity,
             params.main_commodity_decimal_points,
             Local::now().date().naive_local(),
             &prices,
-        );
+        ),
+        children: Vec::new(),
+    };
 
-        rows.push(TableRow {
-            columns: vec![
-                TableCell::Text(account_name.to_string()),
-                TableCell::Value(amount),
-            ]
-        });
+    for (name, src_node) in &src_node.children {
+        node.children.push(convert_tree_node(name, src_node, prices, params));
     }
 
-    Table {
-        headers: headers,
-        rows: rows,
-    }
+    node
 }
 
 fn get_table_months(

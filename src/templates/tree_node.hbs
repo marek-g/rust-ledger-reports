@@ -1,0 +1,9 @@
+<li>{{name}}
+    {{#if children}}
+    <ul>
+        {{#each children}}
+        {{> tree_node }}
+        {{/each}}
+    </ul>
+    {{/if}}
+</li>
