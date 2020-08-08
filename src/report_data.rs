@@ -11,6 +11,7 @@ use rust_decimal::Decimal;
 use rust_decimal::RoundingStrategy;
 use serde::Serialize;
 use serde_json::value::{Map, Value as Json};
+use crate::ledger_utils::tree_balance::TreeBalanceNode;
 
 #[derive(Serialize)]
 struct TableRow {
@@ -137,6 +138,8 @@ fn get_table_summary(balance: &Balance, prices: &Prices, params: &ReportParamete
     let headers = vec!["Account".to_string(), "Amount".to_string()];
 
     let mut rows: Vec<TableRow> = Vec::new();
+
+    let tree_balance= TreeBalanceNode::from(balance.clone());
 
     for (ref account_name, ref account_balance) in &balance.account_balances {
         let amount = account_balance.value_in_commodity_rounded(
