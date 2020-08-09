@@ -1,4 +1,8 @@
 <li>{{name}}
+    <span style="display: inline-block; position: absolute; left: 450px; width: 150px; text-align: right;">{{amount_main_commodity}}</span>
+    {{#if amount_foreign_commodities}}
+    <span style="display: inline-block; position: absolute; left: 610px; color: gray; white-space: nowrap;">({{amount_foreign_commodities}})</span>
+    {{/if}}
     {{#if children}}
     <ul>
         {{#each children}}

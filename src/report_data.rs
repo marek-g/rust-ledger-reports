@@ -77,7 +77,8 @@ impl serde::Serialize for TableCell {
 #[derive(Serialize)]
 struct TreeNode {
     name: String,
-    amount: Decimal,
+    amount_main_commodity: String,
+    amount_foreign_commodities: String,
     children: Vec<TreeNode>,
 }
 
@@ -148,14 +149,25 @@ fn get_summary_tree(balance: &Balance, prices: &Prices, params: &ReportParameter
 
 fn convert_tree_node(name: &str, src_node: &TreeBalanceNode,
                      prices: &Prices, params: &ReportParameters) -> TreeNode {
+    let amount_main_commodity = format!("{} {}", src_node.balance.value_in_commodity_rounded(
+        &params.main_commodity,
+        params.main_commodity_decimal_points,
+        Local::now().date().naive_local(),
+        &prices,
+    ), params.main_commodity);
+
+    let amount_foreign_commodities = if src_node.balance.amounts.len() > 1 ||
+        src_node.balance.amounts.len() == 1 && src_node.balance.amounts.iter().next().unwrap().0 != &params.main_commodity {
+        src_node.balance.amounts.iter()
+            .map(|a| format!("{}", a.1).to_string()).collect::<Vec<String>>().join(", ")
+    } else {
+        "".to_string()
+    };
+
     let mut node = TreeNode {
         name: name.to_string(),
-        amount: src_node.balance.value_in_commodity_rounded(
-            &params.main_commodity,
-            params.main_commodity_decimal_points,
-            Local::now().date().naive_local(),
-            &prices,
-        ),
+        amount_main_commodity,
+        amount_foreign_commodities,
         children: Vec::new(),
     };
 
