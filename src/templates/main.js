@@ -27,7 +27,21 @@ function openPage(pageName, button) {
     window.dispatchEvent(tabChangedEvent);
 }
 
+function handleTree() {
+    var toggler = document.getElementsByClassName("tree_caret");
+    var i;
+
+    for (i = 0; i < toggler.length; i++) {
+        toggler[i].addEventListener("click", function() {
+            this.parentElement.querySelector(".tree_nested").classList.toggle("tree_active");
+            this.classList.toggle("tree_caret-down");
+        });
+    }
+}
+
 window.onload = function () {
     // Get the element with id="defaultOpen" and click on it
     document.getElementById("defaultOpen").click();
+
+    handleTree();
 }

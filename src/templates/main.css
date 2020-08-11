@@ -122,3 +122,40 @@ body {
     stroke: rgba(0,0,0,.15);
     stroke-dasharray: 2,2;
 }
+
+
+/* Tree style */
+
+ul, .tree {
+    /* Remove default bullets */
+    list-style-type: none;
+}
+
+.tree {
+    /* Remove margins and padding from the parent ul */
+    margin: 0;
+    padding: 0;
+}
+
+.tree_caret::before {
+    /* Create the caret/arrow with a unicode, and style it */
+    content: "\25B6";
+    color: black;
+    display: inline-block;
+    margin-right: 6px;
+}
+
+.tree_caret-down::before {
+    /* Rotate the caret/arrow icon when clicked on (using JavaScript) */
+    transform: rotate(90deg);
+}
+
+.tree_nested {
+    /* Hide the nested list */
+    display: none;
+}
+
+.tree_active {
+    /* Show the nested list when the user clicks on the caret/arrow (with JavaScript) */
+    display: block;
+}
