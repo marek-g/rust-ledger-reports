@@ -78,6 +78,7 @@ impl serde::Serialize for TableCell {
 #[derive(Serialize)]
 struct TreeNode {
     name: String,
+    is_positive: bool,
     amount_main_commodity_value: Decimal,
     amount_main_commodity: String,
     amount_foreign_commodities: String,
@@ -170,6 +171,7 @@ fn convert_tree_node(name: &str, src_node: &TreeBalanceNode,
 
     let mut node = TreeNode {
         name: name.to_string(),
+        is_positive: amount_main_commodity_value > Decimal::zero(),
         amount_main_commodity_value,
         amount_main_commodity,
         amount_foreign_commodities,

@@ -1,6 +1,11 @@
 <li>
     {{#if children}}<span class="tree_caret">{{/if}}{{name}}{{#if children}}</span>{{/if}}
-    <span style="display: inline-block; position: absolute; left: 450px; width: 150px; text-align: right;">{{amount_main_commodity}}</span>
+    {{#if is_positive}}
+    <span style="display: inline-block; position: absolute; left: 450px; width: 150px; text-align: right; color: green;">
+    {{else}}
+    <span style="display: inline-block; position: absolute; left: 450px; width: 150px; text-align: right; color: darkred;">
+    {{/if}}
+    {{amount_main_commodity}}</span>
     {{#if amount_foreign_commodities}}
     <span style="display: inline-block; position: absolute; left: 610px; color: gray; white-space: nowrap;">({{amount_foreign_commodities}})</span>
     {{/if}}
