@@ -1,14 +1,33 @@
 <li>
-    {{#if children}}<span class="tree_caret">{{/if}}{{name}}{{#if children}}</span>{{/if}}
+    {{#if children}}<span class="tree_caret">{{/if}}
+    {{name}}
+    {{#if children}}</span>{{/if}}
+
     {{#if is_positive}}
-    <span style="display: inline-block; position: absolute; left: 450px; width: 150px; text-align: right; color: green;">
+        {{#if children}}
+        <span style="display: inline-block; position: absolute; left: 450px; width: 175px; text-align: right; color: green; margin-top: 6px; font-weight: bold;">
+        {{else}}
+        <span style="display: inline-block; position: absolute; left: 450px; width: 175px; text-align: right; color: green;">
+        {{/if}}
     {{else}}
-    <span style="display: inline-block; position: absolute; left: 450px; width: 150px; text-align: right; color: darkred;">
+        {{#if children}}
+        <span style="display: inline-block; position: absolute; left: 450px; width: 175px; text-align: right; color: darkred; margin-top: 6px; font-weight: bold;">
+        {{else}}
+        <span style="display: inline-block; position: absolute; left: 450px; width: 175px; text-align: right; color: darkred;">
+        {{/if}}
     {{/if}}
+
     {{amount_main_commodity}}</span>
     {{#if amount_foreign_commodities}}
-    <span style="display: inline-block; position: absolute; left: 610px; color: gray; white-space: nowrap;">({{amount_foreign_commodities}})</span>
+        {{#if children}}
+        <span style="display: inline-block; position: absolute; left: 635px; color: gray; white-space: nowrap; margin-top: 6px;">
+        {{else}}
+        <span style="display: inline-block; position: absolute; left: 635px; color: gray; white-space: nowrap;">
+        {{/if}}
+        ({{amount_foreign_commodities}})
+        </span>
     {{/if}}
+
     {{#if children}}
     <ul class="tree_nested tree_active">
         {{#each children}}
