@@ -175,6 +175,8 @@ fn convert_tree_node(name: &str, src_node: &TreeBalanceNode,
         node.children.push(convert_tree_node(name, src_node, prices, params));
     }
 
+    node.children.sort_by(|n1, n2| n1.name.cmp(&n2.name));
+
     node
 }
 
