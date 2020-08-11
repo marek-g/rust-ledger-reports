@@ -12,6 +12,7 @@ use rust_decimal::RoundingStrategy;
 use serde::Serialize;
 use serde_json::value::{Map, Value as Json};
 use crate::ledger_utils::tree_balance::TreeBalanceNode;
+use rust_decimal::prelude::Zero;
 
 #[derive(Serialize)]
 struct TableRow {
@@ -77,6 +78,7 @@ impl serde::Serialize for TableCell {
 #[derive(Serialize)]
 struct TreeNode {
     name: String,
+    amount_main_commodity_value: Decimal,
     amount_main_commodity: String,
     amount_foreign_commodities: String,
     children: Vec<TreeNode>,
@@ -149,12 +151,14 @@ fn get_summary_tree(balance: &Balance, prices: &Prices, params: &ReportParameter
 
 fn convert_tree_node(name: &str, src_node: &TreeBalanceNode,
                      prices: &Prices, params: &ReportParameters) -> TreeNode {
-    let amount_main_commodity = format!("{} {}", src_node.balance.value_in_commodity_rounded(
+    let amount_main_commodity_value = src_node.balance.value_in_commodity_rounded(
         &params.main_commodity,
         params.main_commodity_decimal_points,
         Local::now().date().naive_local(),
         &prices,
-    ), params.main_commodity);
+    );
+
+    let amount_main_commodity = format!("{} {}", amount_main_commodity_value, params.main_commodity);
 
     let amount_foreign_commodities = if src_node.balance.amounts.len() > 1 ||
         src_node.balance.amounts.len() == 1 && src_node.balance.amounts.iter().next().unwrap().0 != &params.main_commodity {
@@ -166,6 +170,7 @@ fn convert_tree_node(name: &str, src_node: &TreeBalanceNode,
 
     let mut node = TreeNode {
         name: name.to_string(),
+        amount_main_commodity_value,
         amount_main_commodity,
         amount_foreign_commodities,
         children: Vec::new(),
@@ -175,6 +180,10 @@ fn convert_tree_node(name: &str, src_node: &TreeBalanceNode,
         node.children.push(convert_tree_node(name, src_node, prices, params));
     }
 
+    // remove empty (with 0 value) children
+    node.children.retain(|n| n.amount_main_commodity_value != Decimal::zero());
+
+    // sort children
     node.children.sort_by(|n1, n2| n1.name.cmp(&n2.name));
 
     node
