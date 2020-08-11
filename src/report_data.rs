@@ -152,6 +152,8 @@ fn get_summary_tree(balance: &Balance, prices: &Prices, params: &ReportParameter
 
 fn convert_tree_node(name: &str, src_node: &TreeBalanceNode,
                      prices: &Prices, params: &ReportParameters) -> TreeNode {
+    let mut name = name.to_string();
+
     let amount_main_commodity_value = src_node.balance.value_in_commodity_rounded(
         &params.main_commodity,
         params.main_commodity_decimal_points,
@@ -169,26 +171,36 @@ fn convert_tree_node(name: &str, src_node: &TreeBalanceNode,
         "".to_string()
     };
 
-    let mut node = TreeNode {
-        name: name.to_string(),
+    let mut children= Vec::new();
+
+    for (name, src_node) in &src_node.children {
+        children.push(convert_tree_node(name, src_node, prices, params));
+    }
+
+    // remove empty (with 0 value) children
+    children.retain(|n| n.amount_main_commodity_value != Decimal::zero());
+
+    // sort children
+    children.sort_by(|n1, n2| n1.name.cmp(&n2.name));
+
+    // if there is only one child, merge it
+    if children.len() == 1 {
+        if let Some(child) = children.iter().next() {
+            if amount_main_commodity_value == child.amount_main_commodity_value {
+                name = format!("{}:{}", name, child.name);
+                children.clear();
+            }
+        }
+    }
+
+    TreeNode {
+        name,
         is_positive: amount_main_commodity_value > Decimal::zero(),
         amount_main_commodity_value,
         amount_main_commodity,
         amount_foreign_commodities,
-        children: Vec::new(),
-    };
-
-    for (name, src_node) in &src_node.children {
-        node.children.push(convert_tree_node(name, src_node, prices, params));
+        children,
     }
-
-    // remove empty (with 0 value) children
-    node.children.retain(|n| n.amount_main_commodity_value != Decimal::zero());
-
-    // sort children
-    node.children.sort_by(|n1, n2| n1.name.cmp(&n2.name));
-
-    node
 }
 
 fn get_table_months(
