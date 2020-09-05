@@ -21,8 +21,8 @@ impl InputData {
         };
 
         Ok(InputData {
-            ledger: ledger,
-            prices: prices,
+            ledger,
+            prices,
         })
     }
 }
