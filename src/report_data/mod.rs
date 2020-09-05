@@ -38,11 +38,11 @@ pub fn make_report_data(
     let assets_table = get_assets_table(&monthly_table);
     data.insert("assets_table".to_string(), to_json(&assets_table));
 
-    let mut assets_chart = get_assets_chart(&monthly_table);
+    let assets_chart = get_assets_chart(&monthly_table);
     data.insert("assets_chart".to_string(), to_json(&assets_chart));
 
-    assets_chart.id = "areaChart2".to_string();
-    data.insert("area_chart2".to_string(), to_json(&assets_chart));
+    let expenses_chart = get_expenses_chart(&monthly_table);
+    data.insert("expenses_chart".to_string(), to_json(&expenses_chart));
 
     data
 }

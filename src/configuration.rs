@@ -18,7 +18,9 @@ pub struct ReportParameters {
     pub assets_fixed: Vec<String>,
     pub assets_high_risk: Vec<String>,
 
-    pub income: Vec<String>,
+    pub total_income: Vec<String>,
+    pub job_income: Vec<String>,
+    pub investment_income: Vec<String>,
 
     pub expenses: Vec<String>,
 }

@@ -23,7 +23,7 @@ pub fn get_assets_chart(monthly_table: &MonthlyTable) -> Chart {
     }
 
     Chart {
-        id: "areaChart1".to_string(),
+        id: "assetsChart".to_string(),
         min_x: min_date as f64,
         max_x: max_date as f64,
         digit_points: 0,
@@ -44,7 +44,6 @@ pub fn get_assets_chart(monthly_table: &MonthlyTable) -> Chart {
                 key: "High Risk Assets Tax".to_string(),
                 values: series_assets_high_risk_tax,
             },
-        ])
-            .to_string(),
+        ]).to_string(),
     }
 }

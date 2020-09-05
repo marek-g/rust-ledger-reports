@@ -1,11 +1,11 @@
 <svg id="{{id}}" style='width:100%;height:100%'></svg>
 
 <script>
-    var chartData = {{{series}}};
-
-    var chart;
-
     nv.addGraph(function() {
+        var chartData = {{{series}}};
+
+        var chart;
+
         chart = nv.models.stackedAreaWithFocusChart()
             .useInteractiveGuideline(true)
             .x(function(d) { return d[0] })

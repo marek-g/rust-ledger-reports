@@ -17,7 +17,9 @@ pub struct MonthlyRow {
     pub fixed_assets: Decimal,
     pub high_risk_assets_net: Decimal,
     pub high_risk_assets_tax: Decimal,
-    pub income: Decimal,
+    pub total_income: Decimal,
+    pub job_income: Decimal,
+    pub investment_income: Decimal,
     pub expenses: Decimal,
 }
 
@@ -48,7 +50,9 @@ pub fn get_monthly_table(
                 params.main_commodity_decimal_points,
                 RoundingStrategy::RoundHalfUp,
             );
-        let income = calc.get_value(&params.income);
+        let total_income = calc.get_value(&params.total_income);
+        let job_income = calc.get_value(&params.job_income);
+        let investment_income = calc.get_value(&params.investment_income);
         let expenses = calc.get_value(&params.expenses);
 
         rows.push(MonthlyRow {
@@ -58,7 +62,9 @@ pub fn get_monthly_table(
             fixed_assets: assets_fixed,
             high_risk_assets_net: assets_high_risk_net,
             high_risk_assets_tax: assets_high_risk_tax,
-            income,
+            total_income,
+            job_income,
+            investment_income,
             expenses,
         });
     }

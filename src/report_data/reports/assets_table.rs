@@ -12,7 +12,7 @@ pub fn get_assets_table(
         "Fixed Assets".to_string(),
         "High Risk Assets Net".to_string(),
         "High Risk Assets Tax".to_string(),
-        "Income".to_string(),
+        "Total Income".to_string(),
         "Expenses".to_string(),
     ];
 
@@ -30,7 +30,7 @@ pub fn get_assets_table(
                 TableCell::Value(row.fixed_assets),
                 TableCell::Value(row.high_risk_assets_net),
                 TableCell::Value(row.high_risk_assets_tax),
-                TableCell::Value(row.income),
+                TableCell::Value(row.total_income),
                 TableCell::Value(row.expenses),
             ]}
         );
