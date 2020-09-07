@@ -13,7 +13,7 @@ mod ledger_utils;
 mod report;
 mod report_data;
 
-use clap::{App, Arg};
+use clap::{App, Arg, ArgMatches};
 use std::error::Error;
 
 use crate::configuration::Configuration;
@@ -32,11 +32,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         )
         .get_matches();
 
-    let config_file_name = matches.value_of("config").map(|c| c.to_string()).unwrap_or_else(|| {
-        std::env::current_exe().unwrap().parent().unwrap().join("ledger_reports.toml").to_str().unwrap().to_string()
-    });
-    let config_content = std::fs::read_to_string(config_file_name)?;
-    let configuration: Configuration = toml::from_str(&config_content)?;
+    let configuration = read_configuration(&matches)?;
 
     let input_data = input_data::InputData::load(
         &configuration.src_ledger_file,
@@ -48,4 +44,13 @@ fn main() -> Result<(), Box<dyn Error>> {
         &input_data,
         &configuration.report_params,
     )
+}
+
+fn read_configuration(matches: &ArgMatches) -> Result<Configuration, Box<dyn Error>> {
+    let config_file_name = matches.value_of("config").map(|c| c.to_string()).unwrap_or_else(|| {
+        std::env::current_exe().unwrap().parent().unwrap().join("ledger_reports.toml").to_str().unwrap().to_string()
+    });
+    let config_content = std::fs::read_to_string(config_file_name)?;
+    let configuration: Configuration = toml::from_str(&config_content)?;
+    Ok(configuration)
 }
