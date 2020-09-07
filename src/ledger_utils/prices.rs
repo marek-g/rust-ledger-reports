@@ -56,14 +56,11 @@ pub struct Prices {
 }
 
 impl Prices {
-    pub fn load(ledger: &Ledger, prices: Option<&Ledger>) -> Prices {
+    pub fn load(ledger: &Ledger) -> Prices {
         let mut result = Prices {
             rates: HashMap::new(),
         };
 
-        if let Some(prices_ledger) = prices {
-            result.add_prices(&prices_ledger.commodity_prices);
-        }
         result.add_prices(&ledger.commodity_prices);
         result.add_prices(&get_prices_from_transactions(&ledger.transactions));
 
