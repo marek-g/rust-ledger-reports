@@ -13,15 +13,16 @@ pub struct ReportParameters {
     pub main_commodity: String,
     pub main_commodity_decimal_points: u32,
 
+    pub assets: Vec<String>,
+    pub income: Vec<String>,
+    pub expenses: Vec<String>,
+
     pub assets_liquid: Vec<String>,
     pub assets_fixed: Vec<String>,
     pub assets_high_risk: Vec<String>,
 
-    pub total_income: Vec<String>,
     pub job_income: Vec<String>,
     pub investment_income: Vec<String>,
-
-    pub expenses: Vec<String>,
 }
 
 use std::ops::Deref;

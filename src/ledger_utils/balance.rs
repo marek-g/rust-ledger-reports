@@ -1,8 +1,8 @@
+use crate::ledger_utils::account_balance::AccountBalance;
 use ledger_parser::*;
 use std::collections::HashMap;
 use std::ops::AddAssign;
 use std::ops::SubAssign;
-use crate::ledger_utils::account_balance::AccountBalance;
 
 /// Balance of one or more accounts.
 ///
@@ -41,6 +41,7 @@ impl Balance {
             for account_prefix in account_prefixes {
                 if account_name.starts_with(account_prefix) {
                     balance += account_balance;
+                    break;
                 }
             }
         }

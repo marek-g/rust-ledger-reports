@@ -1,20 +1,22 @@
 use crate::configuration::{ReportParameters};
 use handlebars::to_json;
-use crate::input_data::*;
 use crate::ledger_utils::balance::Balance;
 use crate::ledger_utils::monthly_report::*;
 use serde_json::value::{Map, Value as Json};
 use crate::report_data::*;
+use ledger_parser::Ledger;
+use crate::ledger_utils::prices::Prices;
 
 pub fn make_report_data(
-    input_data: &InputData,
+    ledger: &Ledger,
+    prices: &Prices,
     report_params: &ReportParameters,
 ) -> Map<String, Json> {
     let mut data = Map::new();
 
     configure_html_header(&mut data);
 
-    let monthly_report = MonthlyReport::from(&input_data.ledger);
+    let monthly_report = MonthlyReport::from(ledger);
 
     let empty_balance = Balance::new();
     let total_balance = &monthly_report
@@ -22,10 +24,10 @@ pub fn make_report_data(
         .last()
         .map(|mb| &mb.total)
         .unwrap_or_else(|| &empty_balance);
-    let summary_tree = get_summary_tree(total_balance, &input_data.prices, &report_params);
+    let summary_tree = get_summary_tree(total_balance, &prices, &report_params);
     data.insert("summary_tree".to_string(), to_json(&summary_tree));
 
-    let monthly_table = get_monthly_table(&monthly_report, &input_data.prices, &report_params);
+    let monthly_table = get_monthly_table(&monthly_report, &prices, &report_params);
 
     let assets_table = get_assets_table(&monthly_table);
     data.insert("assets_table".to_string(), to_json(&assets_table));

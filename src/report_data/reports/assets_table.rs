@@ -1,10 +1,8 @@
-use crate::report_data::structures::{Table, TableRow, TableCell};
 use crate::report_data::monthly_table::MonthlyTable;
+use crate::report_data::structures::{Table, TableCell, TableRow};
 use chrono::Datelike;
 
-pub fn get_assets_table(
-    monthly_table: &MonthlyTable,
-) -> Table {
+pub fn get_assets_table(monthly_table: &MonthlyTable) -> Table {
     let headers = vec![
         "Date".to_string(),
         "Assets Total Net".to_string(),
@@ -30,14 +28,11 @@ pub fn get_assets_table(
                 TableCell::Value(row.fixed_assets),
                 TableCell::Value(row.high_risk_assets_net),
                 TableCell::Value(row.high_risk_assets_tax),
-                TableCell::Value(row.total_income),
+                TableCell::Value(row.income),
                 TableCell::Value(row.expenses),
-            ]}
-        );
+            ],
+        });
     }
 
-    Table {
-        headers,
-        rows,
-    }
+    Table { headers, rows }
 }

@@ -2,16 +2,18 @@ use crate::configuration::ReportParameters;
 use std::fs::File;
 
 use handlebars::Handlebars;
-use crate::input_data::InputData;
 use crate::report_data::make_report_data;
 use std::error::Error;
+use ledger_parser::Ledger;
+use crate::ledger_utils::prices::Prices;
 
 pub fn generate_report(
     output_file: &str,
-    input_data: &InputData,
+    ledger: &Ledger,
+    prices: &Prices,
     report_params: &ReportParameters,
 ) -> Result<(), Box<dyn Error>> {
-    let data = make_report_data(&input_data, &report_params);
+    let data = make_report_data(&ledger, &prices, &report_params);
 
     let mut reg = Handlebars::new();
     reg.register_template_string("main", include_str!("templates/main.hbs"))?;

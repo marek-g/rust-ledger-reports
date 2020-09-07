@@ -7,7 +7,7 @@ use std::collections::HashMap;
 #[derive(Debug)]
 pub enum PricesError {
     NoSuchCommoditiesPair(CommoditiesPair),
-    DateTooEarly,
+    DateTooEarly(NaiveDate),
 }
 
 #[derive(Eq, PartialEq, Hash, Clone, Debug)]
@@ -46,7 +46,7 @@ impl RatesTable {
                 break;
             }
         }
-        rate.ok_or(PricesError::DateTooEarly)
+        rate.ok_or(PricesError::DateTooEarly(date))
     }
 }
 
@@ -138,14 +138,29 @@ fn get_prices_from_transactions(transactions: &Vec<Transaction>) -> Vec<Commodit
     for transaction in transactions {
         // TODO: handle empty amounts & balance verifications
         if transaction.postings.len() == 2
-            && transaction.postings[0].amount.clone().unwrap().commodity.name
-                != transaction.postings[1].amount.clone().unwrap().commodity.name
+            && transaction.postings[0]
+                .amount
+                .clone()
+                .unwrap()
+                .commodity
+                .name
+                != transaction.postings[1]
+                    .amount
+                    .clone()
+                    .unwrap()
+                    .commodity
+                    .name
             && transaction.postings[0].amount.clone().unwrap().quantity != Decimal::new(0, 0)
             && transaction.postings[1].amount.clone().unwrap().quantity != Decimal::new(0, 0)
         {
             result.push(CommodityPrice {
                 datetime: transaction.date.and_hms(0, 0, 0),
-                commodity_name: (transaction.postings[0]).amount.clone().unwrap().commodity.name,
+                commodity_name: (transaction.postings[0])
+                    .amount
+                    .clone()
+                    .unwrap()
+                    .commodity
+                    .name,
                 amount: Amount {
                     quantity: -transaction.postings[1].amount.clone().unwrap().quantity
                         / transaction.postings[0].amount.clone().unwrap().quantity,

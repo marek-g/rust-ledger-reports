@@ -1,10 +1,10 @@
-use rust_decimal::{Decimal, RoundingStrategy};
-use crate::ledger_utils::monthly_report::MonthlyReport;
-use crate::ledger_utils::prices::Prices;
 use crate::configuration::{ReportParameters, VecDeref};
 use crate::date_utils::last_day_in_month;
 use crate::ledger_utils::balance::Balance;
+use crate::ledger_utils::monthly_report::MonthlyReport;
+use crate::ledger_utils::prices::Prices;
 use chrono::NaiveDate;
+use rust_decimal::{Decimal, RoundingStrategy};
 
 pub struct MonthlyTable {
     pub rows: Vec<MonthlyRow>,
@@ -17,7 +17,7 @@ pub struct MonthlyRow {
     pub fixed_assets: Decimal,
     pub high_risk_assets_net: Decimal,
     pub high_risk_assets_tax: Decimal,
-    pub total_income: Decimal,
+    pub income: Decimal,
     pub job_income: Decimal,
     pub investment_income: Decimal,
     pub expenses: Decimal,
@@ -50,7 +50,7 @@ pub fn get_monthly_table(
                 params.main_commodity_decimal_points,
                 RoundingStrategy::RoundHalfUp,
             );
-        let total_income = calc.get_value(&params.total_income);
+        let income = calc.get_value(&params.income);
         let job_income = calc.get_value(&params.job_income);
         let investment_income = calc.get_value(&params.investment_income);
         let expenses = calc.get_value(&params.expenses);
@@ -62,16 +62,14 @@ pub fn get_monthly_table(
             fixed_assets: assets_fixed,
             high_risk_assets_net: assets_high_risk_net,
             high_risk_assets_tax: assets_high_risk_tax,
-            total_income,
+            income,
             job_income,
             investment_income,
             expenses,
         });
     }
 
-    MonthlyTable {
-        rows,
-    }
+    MonthlyTable { rows }
 }
 
 struct MonthlyCalculator<'a> {
