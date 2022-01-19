@@ -1,7 +1,7 @@
 use ledger_parser::*;
-use crate::ledger_utils::prices::Prices;
+use ledger_utils::join_ledgers::join_ledgers;
+use ledger_utils::prices::Prices;
 use std::error::Error;
-use crate::ledger_utils::join_ledgers::join_ledgers;
 
 pub struct InputData {
     pub ledger: Ledger,
@@ -18,9 +18,6 @@ impl InputData {
         let ledger = join_ledgers(ledgers?);
         let prices = Prices::load(&ledger);
 
-        Ok(InputData {
-            ledger,
-            prices,
-        })
+        Ok(InputData { ledger, prices })
     }
 }

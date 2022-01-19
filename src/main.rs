@@ -1,15 +1,6 @@
-extern crate chrono;
-extern crate handlebars;
-extern crate ledger_parser;
-extern crate num_traits;
-extern crate rust_decimal;
-extern crate serde;
-extern crate serde_json;
-
 mod configuration;
 mod date_utils;
 mod input_data;
-mod ledger_utils;
 mod report;
 mod report_data;
 
@@ -17,8 +8,8 @@ use clap::{App, Arg, ArgMatches};
 use std::error::Error;
 
 use crate::configuration::Configuration;
-use crate::ledger_utils::handle_foreign_currencies::handle_foreign_currencies;
 use ledger_parser::{Serializer, SerializerSettings};
+use ledger_utils::handle_foreign_currencies::handle_foreign_currencies;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let matches = App::new("rust_reports")
@@ -81,7 +72,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         "{}",
         input_data
             .ledger
-            .to_string_pretty(&SerializerSettings::with_indent("\t"))
+            .to_string_pretty(&SerializerSettings::default().with_indent("\t"))
     );
 
     report::generate_report(

@@ -1,19 +1,23 @@
-use crate::ledger_utils::balance::Balance;
-use crate::ledger_utils::prices::Prices;
 use crate::configuration::ReportParameters;
 use crate::report_data::structures::TreeNode;
-use crate::ledger_utils::tree_balance::TreeBalanceNode;
 use chrono::Local;
-use rust_decimal::Decimal;
+use ledger_utils::balance::Balance;
+use ledger_utils::prices::Prices;
+use ledger_utils::tree_balance::TreeBalanceNode;
 use rust_decimal::prelude::Zero;
+use rust_decimal::Decimal;
 
 pub fn get_summary_tree(balance: &Balance, prices: &Prices, params: &ReportParameters) -> TreeNode {
-    let src_tree_root= TreeBalanceNode::from(balance.clone());
+    let src_tree_root = TreeBalanceNode::from(balance.clone());
     convert_tree_node("/", &src_tree_root, prices, params)
 }
 
-fn convert_tree_node(name: &str, src_node: &TreeBalanceNode,
-                     prices: &Prices, params: &ReportParameters) -> TreeNode {
+fn convert_tree_node(
+    name: &str,
+    src_node: &TreeBalanceNode,
+    prices: &Prices,
+    params: &ReportParameters,
+) -> TreeNode {
     let mut name = name.to_string();
 
     let amount_main_commodity_value = src_node.balance.value_in_commodity_rounded(
@@ -23,17 +27,25 @@ fn convert_tree_node(name: &str, src_node: &TreeBalanceNode,
         &prices,
     );
 
-    let amount_main_commodity = format!("{} {}", amount_main_commodity_value, params.main_commodity);
+    let amount_main_commodity =
+        format!("{} {}", amount_main_commodity_value, params.main_commodity);
 
-    let amount_foreign_commodities = if src_node.balance.amounts.len() > 1 ||
-        src_node.balance.amounts.len() == 1 && src_node.balance.amounts.iter().next().unwrap().0 != &params.main_commodity {
-        src_node.balance.amounts.iter()
-            .map(|a| format!("{}", a.1).to_string()).collect::<Vec<String>>().join(", ")
+    let amount_foreign_commodities = if src_node.balance.amounts.len() > 1
+        || src_node.balance.amounts.len() == 1
+            && src_node.balance.amounts.iter().next().unwrap().0 != &params.main_commodity
+    {
+        src_node
+            .balance
+            .amounts
+            .iter()
+            .map(|a| format!("{}", a.1).to_string())
+            .collect::<Vec<String>>()
+            .join(", ")
     } else {
         "".to_string()
     };
 
-    let mut children= Vec::new();
+    let mut children = Vec::new();
 
     for (name, src_node) in &src_node.children {
         children.push(convert_tree_node(name, src_node, prices, params));

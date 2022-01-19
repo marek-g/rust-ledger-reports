@@ -1,11 +1,11 @@
-use crate::configuration::{ReportParameters};
-use handlebars::to_json;
-use crate::ledger_utils::balance::Balance;
-use crate::ledger_utils::monthly_report::*;
-use serde_json::value::{Map, Value as Json};
+use crate::configuration::ReportParameters;
 use crate::report_data::*;
+use handlebars::to_json;
 use ledger_parser::Ledger;
-use crate::ledger_utils::prices::Prices;
+use ledger_utils::balance::Balance;
+use ledger_utils::monthly_report::*;
+use ledger_utils::prices::Prices;
+use serde_json::value::{Map, Value as Json};
 
 pub fn make_report_data(
     ledger: &Ledger,

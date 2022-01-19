@@ -1,10 +1,10 @@
 use crate::configuration::ReportParameters;
 use std::fs::File;
 
-use crate::ledger_utils::prices::Prices;
 use crate::report_data::make_report_data;
 use handlebars::Handlebars;
 use ledger_parser::Ledger;
+use ledger_utils::prices::Prices;
 use std::error::Error;
 
 pub fn generate_report(

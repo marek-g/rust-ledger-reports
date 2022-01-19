@@ -1,9 +1,9 @@
 use crate::configuration::{ReportParameters, VecDeref};
 use crate::date_utils::last_day_in_month;
-use crate::ledger_utils::balance::Balance;
-use crate::ledger_utils::monthly_report::MonthlyReport;
-use crate::ledger_utils::prices::Prices;
 use chrono::NaiveDate;
+use ledger_utils::balance::Balance;
+use ledger_utils::monthly_report::MonthlyReport;
+use ledger_utils::prices::Prices;
 use rust_decimal::{Decimal, RoundingStrategy};
 
 pub struct MonthlyTable {
@@ -43,12 +43,12 @@ pub fn get_monthly_table(
             * (Decimal::new(1, 0) - tax))
             .round_dp_with_strategy(
                 params.main_commodity_decimal_points,
-                RoundingStrategy::RoundHalfUp,
+                RoundingStrategy::MidpointAwayFromZero,
             );
         let assets_high_risk_tax = (calc.get_value(&params.assets_high_risk) * tax)
             .round_dp_with_strategy(
                 params.main_commodity_decimal_points,
-                RoundingStrategy::RoundHalfUp,
+                RoundingStrategy::MidpointAwayFromZero,
             );
         let income = calc.get_value(&params.income);
         let job_income = calc.get_value(&params.job_income);
