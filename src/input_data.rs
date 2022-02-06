@@ -1,10 +1,12 @@
 use ledger_parser::*;
 use ledger_utils::join_ledgers::join_ledgers;
 use ledger_utils::prices::Prices;
+use ledger_utils::{simplified_ledger, SimplificationError};
+use std::convert::TryFrom;
 use std::error::Error;
 
 pub struct InputData {
-    pub ledger: Ledger,
+    pub ledger: simplified_ledger::Ledger,
     pub prices: Prices,
 }
 
@@ -14,10 +16,24 @@ impl InputData {
             .iter()
             .map(|file_name| Ok(parse(&std::fs::read_to_string(file_name)?)?))
             .collect();
+        let ledgers = ledgers?;
 
-        let ledger = join_ledgers(ledgers?);
-        let prices = Prices::load(&ledger);
+        let mut prices = Prices::new();
+        for ledger in &ledgers {
+            prices.insert_from(ledger);
+        }
 
-        Ok(InputData { ledger, prices })
+        let simplified_ledgers: Result<Vec<simplified_ledger::Ledger>, SimplificationError> =
+            ledgers
+                .into_iter()
+                .map(|ledger| simplified_ledger::Ledger::try_from(ledger))
+                .collect();
+
+        let simplified_ledger = join_ledgers(simplified_ledgers?);
+
+        Ok(InputData {
+            ledger: simplified_ledger,
+            prices,
+        })
     }
 }

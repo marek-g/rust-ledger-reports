@@ -5,10 +5,11 @@ use ledger_parser::Ledger;
 use ledger_utils::balance::Balance;
 use ledger_utils::monthly_report::*;
 use ledger_utils::prices::Prices;
+use ledger_utils::simplified_ledger;
 use serde_json::value::{Map, Value as Json};
 
 pub fn make_report_data(
-    ledger: &Ledger,
+    ledger: &simplified_ledger::Ledger,
     prices: &Prices,
     report_params: &ReportParameters,
 ) -> Map<String, Json> {

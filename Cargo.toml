@@ -5,9 +5,9 @@ authors = ["Marek G <marek@nomail.com>"]
 edition = "2018"
 
 [dependencies]
-ledger-parser = "4"
+ledger-parser = "5"
 #ledger-parser = { path = "../../libs/rust-ledger-parser", version = "*" }
-ledger-utils = "0.1"
+ledger-utils = "0.4"
 clap = "2"
 toml = "0.5"
 chrono = "0.4"
