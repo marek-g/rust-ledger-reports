@@ -1,7 +1,6 @@
 use crate::configuration::ReportParameters;
 use crate::report_data::*;
 use handlebars::to_json;
-use ledger_parser::Ledger;
 use ledger_utils::balance::Balance;
 use ledger_utils::monthly_report::*;
 use ledger_utils::prices::Prices;

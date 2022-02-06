@@ -3,7 +3,6 @@ use std::fs::File;
 
 use crate::report_data::make_report_data;
 use handlebars::Handlebars;
-use ledger_parser::Ledger;
 use ledger_utils::prices::Prices;
 use ledger_utils::simplified_ledger;
 use std::error::Error;
