@@ -1,0 +1,20 @@
+ledger_files = [
+	"~/ledger/prices.db",
+	"~/ledger/marek.ledger"
+]
+report_file = "~/report.html"
+
+[report_params]
+main_commodity = "PLN"
+main_commodity_decimal_points = 2
+
+assets = [ "Aktywa" ]
+income = [ "Przychody" ]
+expenses = [ "Wydatki" ]
+
+assets_liquid = [ "Aktywa:Płynne" ]
+assets_fixed = [ "Aktywa:Stałe" ]
+assets_high_risk = [ "Aktywa:Kryptowaluty" ]
+
+job_income = [ "Przychody:Etat", "Przychody:Fuchy", "Przychody:Korepetycje" ]
+investment_income = [ "Przychody:Stocks", "Przychody:Odsetki" ]

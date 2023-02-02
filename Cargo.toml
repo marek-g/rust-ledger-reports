@@ -2,12 +2,14 @@
 name = "ledger_reports"
 version = "0.1.0"
 authors = ["Marek G <marek@nomail.com>"]
+license = "Unlicense"
 edition = "2018"
 
 [dependencies]
 ledger-parser = "5"
 #ledger-parser = { path = "../../libs/rust-ledger-parser", version = "*" }
 ledger-utils = "0.4"
+#ledger-utils = { path = "../../libs/rust-ledger-utils", version = "*" }
 clap = "2"
 toml = "0.5"
 chrono = "0.4"

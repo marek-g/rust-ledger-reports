@@ -173,9 +173,9 @@ dependencies = [
 
 [[package]]
 name = "ledger-utils"
-version = "0.4.0"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5c486e41f601699b82e27900628afa27c8895af50d650e69f2927f6a0311a1fd"
+checksum = "bd43e128d21d71226bcdd4c27536494a9779ca54602036e67fb95e0e571998f6"
 dependencies = [
  "chrono",
  "ledger-parser",
